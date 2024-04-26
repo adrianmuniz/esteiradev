@@ -14,12 +14,17 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository usuarioRepository;
+    UserRepository userRepository;
 
-    public List<UserModel> findAll() {return usuarioRepository.findAll(); }
+    public List<UserModel> findAll() {return userRepository.findAll(); }
 
     @Override
     public Optional<UserModel> findById(UUID userId) {
-        return usuarioRepository.findById(userId);
+        return userRepository.findById(userId);
+    }
+
+    @Override
+    public void deleteUser(UserModel userModel) {
+        userRepository.delete(userModel);
     }
 }

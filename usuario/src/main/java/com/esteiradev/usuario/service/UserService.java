@@ -11,4 +11,6 @@ public interface UserService {
     List<UserModel> findAll();
 
     Optional<UserModel> findById(UUID userId);
+
+    void deleteUser(UserModel userModel);
 }

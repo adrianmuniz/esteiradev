@@ -33,4 +33,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
         }
     }
+
+    public ResponseEntity<Object> deleteUser(@PathVariable(value = "userId")UUID userId) {
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+        if(!userModelOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+        } else {
+            userService.deleteUser(userModelOptional.get());
+            return ResponseEntity.status(HttpStatus.OK).body("User deleted succes");
+        }
+    }
+
 }
