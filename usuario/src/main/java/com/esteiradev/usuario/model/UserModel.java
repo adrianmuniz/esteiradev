@@ -16,23 +16,23 @@ public class UserModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID userId;
 
     @Column(nullable = false, length = 50)
-    private String nome;
+    private String name;
 
     @Column(nullable = false, unique = true, length = 50)
     private String email;
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime dataCreate;
+    private LocalDateTime dateCreate;
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime dataUpdate;
+    private LocalDateTime dateUpdate;
 
     @Column(nullable = false, length = 255)
     @JsonIgnore
-    private String senha;
+    private String password;
 }
