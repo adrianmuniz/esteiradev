@@ -66,17 +66,4 @@ public class UserController {
         }
     }
 
-    @PostMapping("/singup")
-    public ResponseEntity<Object> registerUser(@RequestBody @Validated(UserDTO.UserView.RegistrationPost.class) @JsonView(UserDTO.UserView.RegistrationPost.class) UserDTO userDTO) {
-        if (userService.existsByEmail(userDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
-        }
-        var userModel = new UserModel();
-        BeanUtils.copyProperties(userDTO, userModel);
-        userModel.setDateCreate(LocalDateTime.now(ZoneId.of("UTC")));
-        userService.save(userModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
-    }
-
-
 }
