@@ -13,4 +13,8 @@ public interface UserService {
     Optional<UserModel> findById(UUID userId);
 
     void deleteUser(UserModel userModel);
+
+    UserModel save(UserModel userModel);
+
+    boolean existsByEmail(String email);
 }

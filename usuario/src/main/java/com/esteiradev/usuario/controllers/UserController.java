@@ -1,12 +1,18 @@
 package com.esteiradev.usuario.controllers;
 
+import com.esteiradev.usuario.dto.UserDTO;
 import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,5 +50,33 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body("User deleted succes");
         }
     }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Object> updateUser(@PathVariable(value = "userId")UUID userId, @RequestBody @Validated(UserDTO.UserView.UserPut.class) @JsonView({UserDTO.UserView.UserPut.class})UserDTO userDTO) {
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+        if(!userModelOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+        } else {
+            var userModel = userModelOptional.get();
+            userModel.setName(userDTO.getName());
+            userModel.setDateUpdate(LocalDateTime.now(ZoneId.of("UTC")));
+            userService.save(userModel);
+
+            return ResponseEntity.status(HttpStatus.OK).body(userModel);
+        }
+    }
+
+    @PostMapping("/singup")
+    public ResponseEntity<Object> registerUser(@RequestBody @Validated(UserDTO.UserView.RegistrationPost.class) @JsonView(UserDTO.UserView.RegistrationPost.class) UserDTO userDTO) {
+        if (userService.existsByEmail(userDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
+        }
+        var userModel = new UserModel();
+        BeanUtils.copyProperties(userDTO, userModel);
+        userModel.setDateCreate(LocalDateTime.now(ZoneId.of("UTC")));
+        userService.save(userModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
+    }
+
 
 }
