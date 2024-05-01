@@ -52,4 +52,6 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
 
+
+
 }

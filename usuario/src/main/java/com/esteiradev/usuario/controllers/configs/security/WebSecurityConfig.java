@@ -22,8 +22,7 @@ public class WebSecurityConfig {
     @Autowired
     AuthenticationEntryPointImpl authenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
-            "/auth/**",
-            "/users/**"
+            "/auth/**"
     };
 
     @Bean
