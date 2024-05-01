@@ -4,7 +4,6 @@ import com.esteiradev.usuario.dto.UserDTO;
 import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

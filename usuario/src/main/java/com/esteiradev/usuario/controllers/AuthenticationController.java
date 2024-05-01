@@ -52,6 +52,24 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
 
+    @PostMapping("/singup/admin")
+    public ResponseEntity<Object> registerUserAdmin(@RequestBody @Validated(UserDTO.UserView.RegistrationPost.class) @JsonView(UserDTO.UserView.RegistrationPost.class) UserDTO userDTO) {
+        if (userService.existsByEmail(userDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
+        }
+        RoleModel roleModel = roleService.findByRoleName(RoleType.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Error: Role is Not Found."));
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        var userModel = new UserModel();
+        BeanUtils.copyProperties(userDTO, userModel);
+        userModel.setUserType(UserType.ADMIN);
+        userModel.setUserStatus(UserStatus.ACTIVE);
+        userModel.setDateCreate(LocalDateTime.now(ZoneId.of("UTC")));
+        userModel.getRoles().add(roleModel);
+        userService.save(userModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
+    }
+
 
 
 }
