@@ -1,4 +1,4 @@
-package com.esteiradev.usuario.controllers.configs.security;
+package com.esteiradev.usuario.configs.security;
 
 import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.repositories.UserRepository;

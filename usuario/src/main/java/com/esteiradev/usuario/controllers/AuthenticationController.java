@@ -1,5 +1,8 @@
 package com.esteiradev.usuario.controllers;
 
+import com.esteiradev.usuario.configs.security.JwtProvider;
+import com.esteiradev.usuario.dto.JwtDto;
+import com.esteiradev.usuario.dto.LoginDto;
 import com.esteiradev.usuario.dto.UserDTO;
 import com.esteiradev.usuario.enums.RoleType;
 import com.esteiradev.usuario.enums.UserStatus;
@@ -9,10 +12,15 @@ import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.RoleService;
 import com.esteiradev.usuario.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +41,12 @@ public class AuthenticationController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtProvider jwtProvider;
 
     @PostMapping("/singup")
     public ResponseEntity<Object> registerUser(@RequestBody @Validated(UserDTO.UserView.RegistrationPost.class) @JsonView(UserDTO.UserView.RegistrationPost.class) UserDTO userDTO) {
@@ -70,6 +84,12 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
 
-
-
+    @PostMapping("/login")
+    public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginDto loginDto){
+        Authentication authentication =authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtProvider.generateJwt(authentication);
+        return ResponseEntity.ok(new JwtDto(jwt));
+    }
 }

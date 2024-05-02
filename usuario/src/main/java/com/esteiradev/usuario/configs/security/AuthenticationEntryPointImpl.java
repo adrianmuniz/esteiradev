@@ -1,4 +1,4 @@
-package com.esteiradev.usuario.controllers.configs.security;
+package com.esteiradev.usuario.configs.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
