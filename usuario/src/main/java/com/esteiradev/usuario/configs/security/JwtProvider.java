@@ -27,7 +27,7 @@ public class JwtProvider {
                 }).collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getUserId().toString()))
+                .setSubject((userPrincipal.getEmail()))
                 .claim("roles",roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
@@ -35,7 +35,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String getSubjectJwt(String token) {
+    public String getEmailJwt(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
