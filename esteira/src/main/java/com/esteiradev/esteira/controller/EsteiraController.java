@@ -10,6 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @RestController
 @CrossOrigin(origins = "x", maxAge = 3600)
 @RequestMapping("/esteira")
@@ -25,4 +29,45 @@ public class EsteiraController {
         esteiraService.save(esteiraModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraModel);
     }
+
+    @GetMapping
+    public ResponseEntity<List<EsteiraModel>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(esteiraService.findAll());
+    }
+
+    @GetMapping("/{esteiraId}")
+    public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId){
+        Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
+        if (!esteiraModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(esteiraModelOptional.get());
+        }
+    }
+
+    @DeleteMapping("/{esteiraId}")
+    public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
+        Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
+        if (!esteiraModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        } else {
+            esteiraService.delete(esteiraModelOptional.get());
+            return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
+        }
+    }
+
+    @PutMapping("/{esteiraId}")
+    public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @RequestBody EsteiraDto esteiraDto){
+        Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
+        if (!esteiraModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        } else {
+            var esteiraModel = esteiraModelOptional.get();
+            esteiraModel.setTitulo(esteiraDto.getTitulo());
+            esteiraService.save(esteiraModel);
+
+            return ResponseEntity.status(HttpStatus.OK).body(esteiraModel);
+        }
+    }
+
 }
