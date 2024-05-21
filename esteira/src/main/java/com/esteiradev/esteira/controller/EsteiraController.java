@@ -39,7 +39,7 @@ public class EsteiraController {
     public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(esteiraModelOptional.get());
         }
@@ -49,7 +49,7 @@ public class EsteiraController {
     public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         } else {
             esteiraService.delete(esteiraModelOptional.get());
             return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
@@ -60,7 +60,7 @@ public class EsteiraController {
     public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @RequestBody EsteiraDto esteiraDto){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         } else {
             var esteiraModel = esteiraModelOptional.get();
             esteiraModel.setTitulo(esteiraDto.getTitulo());

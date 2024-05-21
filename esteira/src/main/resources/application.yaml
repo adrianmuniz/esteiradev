@@ -1,9 +1,14 @@
+server:
+  port: 8082
+  servlet:
+    context-path: '/esteiradev/'
+
 spring:
   application:
     name: esteiradev-esteira
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/esteiradev-usuario
+    url: jdbc:postgresql://localhost:5432/esteiradev-esteira
     username: postgres
     password: banco123
   jpa:
