@@ -1,8 +1,10 @@
 package com.esteiradev.esteira.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -16,4 +18,8 @@ public class EsteiraModel {
 
     @Column(nullable = false, length = 30)
     private String titulo;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "esteira", fetch = FetchType.LAZY)
+    private Set<EsteiraUserModel> esteiraUsers;
 }

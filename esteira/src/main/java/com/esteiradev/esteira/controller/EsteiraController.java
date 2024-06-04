@@ -3,8 +3,14 @@ package com.esteiradev.esteira.controller;
 import com.esteiradev.esteira.dto.EsteiraDto;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.specifications.SpecificationTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,8 +37,16 @@ public class EsteiraController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EsteiraModel>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(esteiraService.findAll());
+    public ResponseEntity<Page<EsteiraModel>> getAll(SpecificationTemplate.EsteiraSpec spec,
+                                                     @PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable,
+                                                     @RequestParam(required = false) UUID userId) {
+        Page<EsteiraModel> esteiraModelPage = null;
+        if(userId != null){
+            esteiraModelPage = esteiraService.findAll(SpecificationTemplate.esteiraUsersId(userId).and(spec), pageable);
+        } else {
+            esteiraModelPage = esteiraService.findAll(spec, pageable);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(esteiraModelPage);
     }
 
     @GetMapping("/{esteiraId}")

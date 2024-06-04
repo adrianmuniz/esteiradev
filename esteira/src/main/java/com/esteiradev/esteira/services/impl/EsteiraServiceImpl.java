@@ -4,6 +4,9 @@ import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.repositories.EsteiraRepository;
 import com.esteiradev.esteira.services.EsteiraService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,5 +36,10 @@ public class EsteiraServiceImpl implements EsteiraService {
     @Override
     public void delete(EsteiraModel esteiraModel) {
         esteiraRepository.delete(esteiraModel);
+    }
+
+    @Override
+    public Page<EsteiraModel> findAll(Specification<EsteiraModel> spec, Pageable pageable) {
+        return esteiraRepository.findAll(spec, pageable);
     }
 }
