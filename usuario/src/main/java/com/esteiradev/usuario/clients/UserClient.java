@@ -23,7 +23,7 @@ public class UserClient {
     @Autowired
     RestTemplate restTemplate;
 
-    String REQUEST_URI =  "http://localhost:8082/esteiradev";
+    String REQUEST_URI =  "http://localhost:8082";
 
     public Page<EsteiraDto> getAllEsteirasByUser(UUID userId, Pageable pageable){
         List<EsteiraDto> searchResult= null;
