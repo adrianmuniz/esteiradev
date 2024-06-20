@@ -1,6 +1,6 @@
 package com.esteiradev.usuario.controllers;
 
-import com.esteiradev.usuario.clients.UserClient;
+import com.esteiradev.usuario.clients.EsteiraClient;
 import com.esteiradev.usuario.dto.EsteiraDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class UserEsteiraController {
 
     @Autowired
-    UserClient esteiraClient;
+    EsteiraClient esteiraClient;
 
     @GetMapping("/users/{userId}/esteiras")
     public ResponseEntity<Page<EsteiraDto>> getAllEsteirasByUser(@PageableDefault(page =0, size =10, sort = "esteiraId", direction = Sort.Direction.ASC) Pageable pageable,
