@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -44,5 +45,20 @@ public class EsteiraClient {
 
         log.info("Ending request /esteira userId {}", userId);
         return result.getBody();
+    }
+
+    public EsteiraDto criarEsteiraByUser(EsteiraDto esteiraDto) {
+        EsteiraDto result = null;
+        String url = REQUEST_URI + "/esteira/criar";
+        log.debug("Request URL: {}", url);
+        log.info("Request URL: {}", url);
+
+        try {
+            result = restTemplate.postForObject(url, esteiraDto, EsteiraDto.class);
+            log.info("Request postForObject: {}", result);
+        } catch(HttpStatusCodeException e){
+            log.error("Error request /esteira {} ", e);
+        }
+        return result;
     }
 }

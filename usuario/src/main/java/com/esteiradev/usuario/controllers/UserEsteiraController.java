@@ -25,4 +25,10 @@ public class UserEsteiraController {
                                                                  @PathVariable(value = "userId") UUID userId) {
         return ResponseEntity.status(HttpStatus.OK).body(esteiraClient.getAllEsteirasByUser(userId, pageable));
     }
+
+    @PostMapping("/criarEsteira")
+    public ResponseEntity<EsteiraDto> criarEsteiraByUser(@RequestBody EsteiraDto esteiraDto){
+        return ResponseEntity.status(HttpStatus.OK).body(esteiraClient.criarEsteiraByUser(esteiraDto));
+    }
+
 }
