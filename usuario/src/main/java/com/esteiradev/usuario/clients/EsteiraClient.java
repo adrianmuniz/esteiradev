@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -47,10 +46,9 @@ public class EsteiraClient {
         return result.getBody();
     }
 
-    public EsteiraDto criarEsteiraByUser(EsteiraDto esteiraDto) {
+    public EsteiraDto createEsteiraByUser(UUID userId, EsteiraDto esteiraDto) {
         EsteiraDto result = null;
-        String url = REQUEST_URI + "/esteira/criar";
-        log.debug("Request URL: {}", url);
+        String url = REQUEST_URI + "/esteira/" + userId + "/criar";
         log.info("Request URL: {}", url);
 
         try {
