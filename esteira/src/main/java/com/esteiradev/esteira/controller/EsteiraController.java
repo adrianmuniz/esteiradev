@@ -2,11 +2,12 @@ package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.EsteiraDto;
 import com.esteiradev.esteira.model.EsteiraModel;
+import com.esteiradev.esteira.model.EsteiraUserModel;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.services.EsteiraUserService;
 import com.esteiradev.esteira.specifications.SpecificationTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,11 +28,19 @@ public class EsteiraController {
     @Autowired
     EsteiraService esteiraService;
 
-    @PostMapping("/criar")
-    public ResponseEntity<Object> criarEsteira(@RequestBody @Validated EsteiraDto esteiraDto){
+    @Autowired
+    EsteiraUserService esteiraUserService;
+
+    @PostMapping("/{userId}/criar")
+    public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId,@RequestBody @Validated EsteiraDto esteiraDto){
         var esteiraModel = new EsteiraModel();
         BeanUtils.copyProperties(esteiraDto, esteiraModel);
         esteiraService.save(esteiraModel);
+
+        var esteiraUserModel = new EsteiraUserModel();
+        esteiraUserModel.setUserId(userId);
+        esteiraUserModel.setEsteira(esteiraModel);
+        esteiraUserService.save(esteiraUserModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraModel);
     }
 
