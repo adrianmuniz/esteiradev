@@ -6,6 +6,7 @@ import com.esteiradev.esteira.model.EsteiraUserModel;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.services.EsteiraUserService;
 import com.esteiradev.esteira.specifications.SpecificationTemplate;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @CrossOrigin(origins = "x", maxAge = 3600)
 @RequestMapping("/esteira")
@@ -35,11 +37,12 @@ public class EsteiraController {
     public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId,@RequestBody @Validated EsteiraDto esteiraDto){
         var esteiraModel = new EsteiraModel();
         BeanUtils.copyProperties(esteiraDto, esteiraModel);
+        esteiraModel.setUserId(userId);
         esteiraService.save(esteiraModel);
 
         var esteiraUserModel = new EsteiraUserModel();
         esteiraUserModel.setUserId(userId);
-        esteiraUserModel.setEsteira(esteiraModel);
+        esteiraUserModel.setEsteiraId(esteiraModel.getEsteiraId());
         esteiraUserService.save(esteiraUserModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraModel);
     }
@@ -69,13 +72,19 @@ public class EsteiraController {
 
     @DeleteMapping("/{esteiraId}")
     public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
-        Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
-        if (!esteiraModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
-        } else {
-            esteiraService.delete(esteiraModelOptional.get());
+        Optional<EsteiraModel> esteiraModel = esteiraService.findById(esteiraId);
+
+//        Optional<EsteiraUserModel> esteiraUser = esteiraUserService.findById(esteiraId);
+//        log.debug("esteiraModelOptional encontrado: " + esteiraModelOptional);
+//        if (!esteiraModelOptional.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
+//        }else if(esteiraUser.isPresent()){
+//            log.info("esteiraUser encontrado: " + esteiraUser);
+//            esteiraUserService.delete(esteiraUser.get());
+//            log.info("esteiraUser deletada");
+//        }
+            esteiraService.delete(esteiraModel.get());
             return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
-        }
     }
 
     @PutMapping("/{esteiraId}")

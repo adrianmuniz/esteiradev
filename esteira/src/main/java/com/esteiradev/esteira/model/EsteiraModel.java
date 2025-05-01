@@ -19,7 +19,6 @@ public class EsteiraModel {
     @Column(nullable = false, length = 30)
     private String titulo;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "esteira", fetch = FetchType.LAZY)
-    private Set<EsteiraUserModel> esteiraUsers;
+    @Column(nullable = false)
+    private UUID userId;
 }

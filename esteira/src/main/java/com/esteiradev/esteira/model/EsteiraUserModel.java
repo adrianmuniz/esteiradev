@@ -25,6 +25,7 @@ public class EsteiraUserModel implements Serializable {
     @Column(nullable = false)
     private UUID userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private EsteiraModel esteira;
+    @Column
+    private UUID esteiraId;
+
 }

@@ -14,4 +14,6 @@ public class EsteiraDto {
 
     @NotBlank
     private String titulo;
+
+    private UUID userId;
 }
