@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface EsteiraUserRepository extends JpaRepository<EsteiraUserModel, UUID>, JpaSpecificationExecutor<EsteiraUserModel> {
 
 
+    @Query(value = "SELECT * FROM TB_ESTEIRAS_USER WHERE esteira_id  = :esteiraId", nativeQuery = true)
+    Optional<EsteiraUserModel> findByEsteiraId(UUID esteiraId);
 }

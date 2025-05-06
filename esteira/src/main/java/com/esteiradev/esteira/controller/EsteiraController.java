@@ -72,19 +72,18 @@ public class EsteiraController {
 
     @DeleteMapping("/{esteiraId}")
     public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
-        Optional<EsteiraModel> esteiraModel = esteiraService.findById(esteiraId);
+        Optional<EsteiraModel> esteira = esteiraService.findById(esteiraId);
 
-//        Optional<EsteiraUserModel> esteiraUser = esteiraUserService.findById(esteiraId);
-//        log.debug("esteiraModelOptional encontrado: " + esteiraModelOptional);
-//        if (!esteiraModelOptional.isPresent()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
-//        }else if(esteiraUser.isPresent()){
-//            log.info("esteiraUser encontrado: " + esteiraUser);
-//            esteiraUserService.delete(esteiraUser.get());
-//            log.info("esteiraUser deletada");
-//        }
-            esteiraService.delete(esteiraModel.get());
-            return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
+        Optional<EsteiraUserModel> esteiraUser = esteiraUserService.findByEsteiraId(esteiraId);
+        log.debug("esteiraModelOptional encontrado: " + esteiraUser);
+        if (!esteiraUser.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
+        } else if(esteiraUser.isPresent()){
+            esteiraUserService.delete(esteiraUser.get());
+            log.info("esteiraUser deletada");
+        }
+        esteiraService.delete(esteira.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
     }
 
     @PutMapping("/{esteiraId}")

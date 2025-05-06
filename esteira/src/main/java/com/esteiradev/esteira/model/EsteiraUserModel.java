@@ -10,8 +10,6 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "TB_ESTEIRAS_USER")
