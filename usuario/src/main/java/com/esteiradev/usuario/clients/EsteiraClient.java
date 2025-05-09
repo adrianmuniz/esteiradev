@@ -47,18 +47,4 @@ public class EsteiraClient {
         log.info("Ending request /esteira userId {}", userId);
         return result.getBody();
     }
-
-    public EsteiraDto createEsteiraByUser(UUID userId, EsteiraDto esteiraDto) {
-        EsteiraDto result = null;
-        String url = REQUEST_URI + "/esteira/" + userId + "/criar";
-        log.info("Request URL: {}", url);
-
-        try {
-            result = restTemplate.postForObject(url, esteiraDto, EsteiraDto.class);
-            log.info("Request postForObject: {}", result);
-        } catch(HttpStatusCodeException e){
-            log.error("Error request /esteira {} ", e);
-        }
-        return result;
-    }
 }
