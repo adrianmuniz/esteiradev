@@ -34,17 +34,4 @@ public class UserEsteiraController {
                                                                  @PathVariable(value = "userId") UUID userId) {
         return ResponseEntity.status(HttpStatus.OK).body(esteiraClient.getAllEsteirasByUser(userId, pageable));
     }
-
-    @PostMapping("/users/criarEsteira")
-    public ResponseEntity<Object> criarEsteiraByUser(Authentication authentication, @RequestBody EsteiraDto esteiraDto){
-
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        UUID userId = userPrincipal.getUserId();
-        Optional<UserModel> userModelOptional = userService.findById(userId);
-        if(!userModelOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(esteiraClient.createEsteiraByUser(userId, esteiraDto));
-    }
-
 }
