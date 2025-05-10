@@ -1,11 +1,8 @@
 package com.esteiradev.usuario.controllers;
 
 import com.esteiradev.usuario.clients.EsteiraClient;
-import com.esteiradev.usuario.configs.security.UserDetailsImpl;
 import com.esteiradev.usuario.dto.EsteiraDto;
-import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.UserService;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
