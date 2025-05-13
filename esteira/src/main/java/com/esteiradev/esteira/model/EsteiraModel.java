@@ -19,6 +19,6 @@ public class EsteiraModel {
     @Column(nullable = false, length = 30)
     private String titulo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private UUID userId;
 }

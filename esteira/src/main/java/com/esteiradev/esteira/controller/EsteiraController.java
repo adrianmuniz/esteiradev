@@ -2,7 +2,9 @@ package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.EsteiraDto;
 import com.esteiradev.esteira.model.EsteiraModel;
+import com.esteiradev.esteira.model.EsteiraUserModel;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.services.EsteiraUserService;
 import com.esteiradev.esteira.specifications.SpecificationTemplate;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -28,12 +30,21 @@ public class EsteiraController {
     @Autowired
     EsteiraService esteiraService;
 
+    @Autowired
+    EsteiraUserService esteiraUserService;
+
 
     @PostMapping("/{userId}/criar")
     public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId,@RequestBody @Validated EsteiraDto esteiraDto){
         var esteiraModel = new EsteiraModel();
         BeanUtils.copyProperties(esteiraDto, esteiraModel);
         esteiraModel.setUserId(userId);
+
+        var esteiraUserModel = new EsteiraUserModel();
+        esteiraUserModel.setUserId(userId);
+        esteiraUserModel.setEsteiraId(esteiraModel.getEsteiraId());
+        esteiraUserService.save(esteiraUserModel);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraService.save(esteiraModel));
     }
 
