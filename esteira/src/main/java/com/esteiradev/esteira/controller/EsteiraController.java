@@ -39,6 +39,7 @@ public class EsteiraController {
         var esteiraModel = new EsteiraModel();
         BeanUtils.copyProperties(esteiraDto, esteiraModel);
         esteiraModel.setUserId(userId);
+        esteiraService.save(esteiraModel);
 
         var esteiraUserModel = new EsteiraUserModel();
         esteiraUserModel.setUserId(userId);
@@ -69,9 +70,12 @@ public class EsteiraController {
     @DeleteMapping("/{esteiraId}")
     public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
         Optional<EsteiraModel> esteira = esteiraService.findById(esteiraId);
-
         if (!esteira.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
+        }
+        Optional<EsteiraUserModel> esteiraUserModel = esteiraUserService.findByEsteiraId(esteiraId);
+        if(esteiraUserModel.isPresent()){
+            esteiraUserService.delete(esteiraUserModel.get());
         }
         esteiraService.delete(esteira.get());
         return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
