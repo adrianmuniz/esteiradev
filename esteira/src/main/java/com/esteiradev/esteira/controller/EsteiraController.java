@@ -28,12 +28,13 @@ public class EsteiraController {
     @Autowired
     EsteiraService esteiraService;
 
-
     @PostMapping("/{userId}/criar")
     public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId,@RequestBody @Validated EsteiraDto esteiraDto){
         var esteiraModel = new EsteiraModel();
         BeanUtils.copyProperties(esteiraDto, esteiraModel);
         esteiraModel.setUserId(userId);
+        esteiraService.save(esteiraModel);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraService.save(esteiraModel));
     }
 
@@ -58,7 +59,6 @@ public class EsteiraController {
     @DeleteMapping("/{esteiraId}")
     public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
         Optional<EsteiraModel> esteira = esteiraService.findById(esteiraId);
-
         if (!esteira.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         }

@@ -53,10 +53,6 @@ public class UserModel implements Serializable {
     private UserStatus userStatus;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<UserEsteiraModel> usersEsteiras;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(    name = "TB_USERS_ROLES",
             joinColumns = @JoinColumn(name = "user_id"),

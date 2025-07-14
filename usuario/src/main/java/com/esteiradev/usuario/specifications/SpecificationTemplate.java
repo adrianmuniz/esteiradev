@@ -1,11 +1,11 @@
 package com.esteiradev.usuario.specifications;
 
-import com.esteiradev.usuario.model.UserEsteiraModel;
 import com.esteiradev.usuario.model.UserModel;
-import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
-import net.kaczmarzyk.spring.data.jpa.domain.LikeIgnoreCase;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,11 +22,8 @@ public class SpecificationTemplate {
     })
     public interface UserSpec extends Specification<UserModel> {}
 
-    public static Specification<UserModel> userEsteiraId(final UUID esteiraId) {
-        return (root, query, cb) -> {
-            query.distinct(true);
-            Join<UserModel, UserEsteiraModel> userProd = root.join("usersEsteiras");
-            return cb.equal(userProd.get("esteiraId"), esteiraId);
-        };
+    public static Specification<UserModel> userIdEquals(UUID userId) {
+        return (Root<UserModel> root, CriteriaQuery<?> query, CriteriaBuilder cb) ->
+                cb.equal(root.get("userId"), userId);
     }
 }
