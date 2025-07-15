@@ -1,13 +1,40 @@
 package com.esteiradev.esteira.controller;
 
+import com.esteiradev.esteira.dto.CardDto;
+import com.esteiradev.esteira.model.CardModel;
+import com.esteiradev.esteira.services.CardService;
+import com.esteiradev.esteira.services.EsteiraService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @Log4j2
 @RestController
 @CrossOrigin(origins = "x", maxAge = 3600)
 @RequestMapping("/cards")
 public class CardController {
+
+    @Autowired
+    CardService cardService;
+
+    @Autowired
+    EsteiraService esteiraService;
+
+    @PostMapping("/{esteiraId}/create")
+    public ResponseEntity<Object> createCard(@PathVariable UUID esteiraId,
+                                             @RequestBody CardDto dto){
+        var cardModel = new CardModel();
+        BeanUtils.copyProperties(dto, cardModel);
+
+        var esteiraModel = esteiraService.findById(esteiraId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
+        cardModel.setEsteiraModel(esteiraModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(cardModel));
+    }
 }
