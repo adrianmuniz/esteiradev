@@ -2,6 +2,7 @@ package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.model.CardModel;
+import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
 import lombok.extern.log4j.Log4j2;
@@ -70,4 +71,31 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body("Card Deletado com Sucesso");
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID id, @RequestBody CardDto dto){
+        Optional<CardModel> cardModelOptional = cardService.findByIdWithEsteira(id);
+        if (!cardModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
+        }
+        var cardModel = cardModelOptional.get();
+
+        if(dto.title() != null){
+            cardModel.setTitle(dto.title());
+        }
+        if(dto.description() != null){
+            cardModel.setDescription(dto.description());
+        }
+        if(dto.status() != null){
+            cardModel.setStatus(dto.status());
+        }
+        if(dto.position() != null){
+            cardModel.setPosition(dto.position());
+        }
+        if(dto.esteiraId() != null && !dto.esteiraId().equals(cardModel.getEsteiraModel().getEsteiraId())){
+            EsteiraModel novaEsteira = esteiraService.findById(dto.esteiraId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
+            cardModel.setEsteiraModel(novaEsteira);
+        }
+        cardService.save(cardModel);
+        return ResponseEntity.status(HttpStatus.OK).body(cardModel);
+    }
 }
