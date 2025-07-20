@@ -60,4 +60,14 @@ public class CardController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID id){
+        Optional<CardModel> cardModel = cardService.findByIdWithEsteira(id);
+        if (!cardModel.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
+        }
+        cardService.delete(cardModel.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Card Deletado com Sucesso");
+    }
+
 }

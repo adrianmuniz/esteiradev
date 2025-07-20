@@ -31,4 +31,9 @@ public class CardServiceImpl implements CardService {
     public Optional<CardModel> findByIdWithEsteira(UUID id) {
         return cardRepository.findByIdWithEsteira(id);
     }
+
+    @Override
+    public void delete(CardModel cardModel) {
+        cardRepository.delete(cardModel);
+    }
 }

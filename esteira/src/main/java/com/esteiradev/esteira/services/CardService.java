@@ -14,4 +14,6 @@ public interface CardService {
     Page<CardModel> findAllWithEsteira(Pageable pageable);
 
     Optional<CardModel> findByIdWithEsteira(UUID id);
+
+    void delete(CardModel cardModel);
 }
