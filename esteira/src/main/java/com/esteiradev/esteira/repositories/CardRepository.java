@@ -7,10 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpecificationExecutor<CardModel> {
 
     @Query("SELECT c FROM CardModel c JOIN FETCH c.esteiraModel")
     Page<CardModel> findAllWithEsteira(Pageable pageable);
+
+    @Query("SELECT c FROM CardModel c JOIN FETCH c.esteiraModel WHERE c.id = :id")
+    Optional<CardModel> findByIdWithEsteira(UUID id);
 }

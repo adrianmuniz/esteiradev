@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class CardServiceImpl implements CardService {
 
@@ -22,5 +25,10 @@ public class CardServiceImpl implements CardService {
     @Override
     public Page<CardModel> findAllWithEsteira(Pageable pageable) {
         return cardRepository.findAllWithEsteira(pageable);
+    }
+
+    @Override
+    public Optional<CardModel> findByIdWithEsteira(UUID id) {
+        return cardRepository.findByIdWithEsteira(id);
     }
 }

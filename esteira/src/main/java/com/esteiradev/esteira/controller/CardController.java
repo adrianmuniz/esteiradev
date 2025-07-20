@@ -4,7 +4,6 @@ import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
-import com.esteiradev.esteira.specifications.SpecificationTemplate;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
@@ -48,6 +48,16 @@ public class CardController {
         Page<CardModel> cardModelPage = null;
         cardModelPage = cardService.findAllWithEsteira(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(cardModelPage);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID id){
+        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
+        if (!optionalCardModel.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(optionalCardModel.get());
+        }
     }
 
 }
