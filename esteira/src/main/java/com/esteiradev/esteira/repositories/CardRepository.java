@@ -12,7 +12,10 @@ import java.util.UUID;
 
 public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpecificationExecutor<CardModel> {
 
-    @Query("SELECT c FROM CardModel c JOIN FETCH c.esteiraModel")
+    @Query(
+            value = "SELECT c FROM CardModel c JOIN FETCH c.esteiraModel",
+            countQuery = "SELECT COUNT(c) FROM CardModel c"
+    )
     Page<CardModel> findAllWithEsteira(Pageable pageable);
 
     @Query("SELECT c FROM CardModel c JOIN FETCH c.esteiraModel WHERE c.id = :id")

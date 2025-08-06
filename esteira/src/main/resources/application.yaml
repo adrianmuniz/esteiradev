@@ -2,9 +2,6 @@ esteira:
   api:
     url:
       authuser: 'http://localhost:8087'
-  auth:
-    jwtSecret: t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9z$B&E)H@McQfTjWn
-    jwtExpirationMs: 14400000
 
 server:
   port: 8082
@@ -25,3 +22,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+
+esteiradev:
+  auth:
+    jwtSecret: LWe9ZnUj7XjEOc6bq2QX0rL7zK+qL4YrbnYdElyxlrKZtAqg3uQqKq4DdNV/pRZcMRlcGmTVmX1zGKrppkxI6A==
+    jwtExpirationMs: 14400000

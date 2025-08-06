@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtProvider {
-
     Logger log = LogManager.getLogger(JwtProvider.class);
 
-    @Value("${esteira.auth.jwtSecret}")
+    @Value("${esteiradev.auth.jwtSecret}")
     private String jwtSecret;
 
     public String getSubjectJwt(String token) {

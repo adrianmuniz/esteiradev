@@ -16,27 +16,26 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class AuthenticationJwtFilter extends OncePerRequestFilter {
-
     @Autowired
     JwtProvider jwtProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String jwtStr = getTokenHeader(request);
+            String jwtStr = getTokenHeader(httpServletRequest);
             if (jwtStr != null && jwtProvider.validateJwt(jwtStr)) {
                 String userId = jwtProvider.getSubjectJwt(jwtStr);
                 String rolesStr = jwtProvider.getClaimNameJwt(jwtStr, "roles");
                 UserDetails userDetails = UserDetailsImpl.build(UUID.fromString(userId), rolesStr);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
             logger.error("Cannot set User Authentication: {}", e);
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private String getTokenHeader(HttpServletRequest request) {
