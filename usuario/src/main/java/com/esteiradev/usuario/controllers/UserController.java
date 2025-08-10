@@ -1,10 +1,12 @@
 package com.esteiradev.usuario.controllers;
 
+import com.esteiradev.usuario.configs.security.UserDetailsImpl;
 import com.esteiradev.usuario.dto.UserDTO;
 import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.UserService;
 import com.esteiradev.usuario.specifications.SpecificationTemplate;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @CrossOrigin(origins = "x", maxAge = 3600)
 @RequestMapping("/users")
@@ -29,16 +35,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec,
-                                                       @PageableDefault(page =0, size =10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable,
-                                                       @RequestParam(required = false) UUID userId) {
+    public ResponseEntity<Page<UserModel>> getAllUsers(@PageableDefault(page =0, size =10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<UserModel> userModelPage = null;
-        if(userId != null) {
-            userModelPage = userService.findAll(SpecificationTemplate.userIdEquals(userId).and(spec), pageable);
-        } else {
-            userModelPage = userService.findAll(spec, pageable);
-        }
+        userModelPage = userService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage);
     }
 

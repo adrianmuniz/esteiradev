@@ -1,5 +1,6 @@
 package com.esteiradev.usuario.configs.security;
 
+import com.esteiradev.usuario.model.RoleModel;
 import com.esteiradev.usuario.model.UserModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private String email;
+    private Set<RoleModel> roles;
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(UserModel userModel) {
@@ -33,6 +36,7 @@ public class UserDetailsImpl implements UserDetails {
                 userModel.getName(),
                 userModel.getPassword(),
                 userModel.getEmail(),
+                userModel.getRoles(),
                 authorities);
     }
 
