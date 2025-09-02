@@ -1,6 +1,5 @@
 package com.esteiradev.usuario.dto;
 
-import com.esteiradev.usuario.model.RoleModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.Email;
@@ -9,7 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -45,6 +43,4 @@ public class UserDTO {
 
     @JsonView(UserView.UserPut.class)
     private LocalDateTime dateUpdate;
-
-    private Set<RoleModel> roles;
 }

@@ -20,4 +20,6 @@ public interface UserService {
     boolean existsByEmail(String email);
 
     Page<UserModel> findAll(Pageable pageable);
+
+    Optional<UserModel> findByUserId(UUID userId);
 }
