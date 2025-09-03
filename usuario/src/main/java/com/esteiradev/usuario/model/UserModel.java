@@ -52,7 +52,6 @@ public class UserModel implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(    name = "TB_USERS_ROLES",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -1,9 +1,9 @@
 package com.esteiradev.usuario.service;
 
+import com.esteiradev.usuario.enums.PasswordUpdateResult;
 import com.esteiradev.usuario.model.UserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,6 @@ import java.util.UUID;
 
 public interface UserService {
 
-    List<UserModel> findAll();
 
     Optional<UserModel> findById(UUID userId);
 
@@ -21,5 +20,11 @@ public interface UserService {
 
     boolean existsByEmail(String email);
 
-    Page<UserModel> findAll(Specification<UserModel> spec, Pageable pageable);
+    Page<UserModel> findAll(Pageable pageable);
+
+    Optional<UserModel> findByUserId(UUID userId);
+
+    boolean isCurrent(UUID userId, String email);
+
+    PasswordUpdateResult updatePassword(UUID userId, String oldPassword, String newPassword);
 }
