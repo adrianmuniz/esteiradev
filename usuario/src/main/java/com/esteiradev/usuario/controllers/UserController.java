@@ -1,7 +1,9 @@
 package com.esteiradev.usuario.controllers;
 
 import com.esteiradev.usuario.dto.UserDTO;
+import com.esteiradev.usuario.dto.UserPasswordUpdateDto;
 import com.esteiradev.usuario.dto.UserUpdateDto;
+import com.esteiradev.usuario.enums.PasswordUpdateResult;
 import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -18,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
@@ -45,7 +48,7 @@ public class UserController {
     public ResponseEntity<Object> getOneUser(@PathVariable(value = "userId")UUID userId) {
         Optional<UserModel> userModelOptional = userService.findByUserId(userId);
         if (!userModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
         }
@@ -56,19 +59,19 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable(value = "userId")UUID userId) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
         if(!userModelOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         } else {
             userService.deleteUser(userModelOptional.get());
-            return ResponseEntity.status(HttpStatus.OK).body("User deleted success");
+            return ResponseEntity.status(HttpStatus.OK).body("Usuário Deletado com Sucesso");
         }
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable(value = "userId")UUID userId, @RequestBody UserUpdateDto dto) {
+    public ResponseEntity<?> updatePartialUser(@PathVariable(value = "userId")UUID userId, @RequestBody UserUpdateDto dto) {
         Optional<UserModel> userModelOptional = userService.findById(userId);
         if(!userModelOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         }
         var userModel = userModelOptional.get();
 
@@ -86,5 +89,29 @@ public class UserController {
         responseDto.setEmail(userModel.getEmail());
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @RequestBody UserPasswordUpdateDto dto, Principal principal){
+        if(!userService.isCurrent(userId, principal.getName())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
+        }
+
+        PasswordUpdateResult result = userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
+        switch (result) {
+            case SUCCESS:
+                return ResponseEntity.ok("Senha atualizada com sucesso");
+            case CURRENT_PASSWORD_INCORRECT:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha atual incorreta");
+            case NEW_PASSWORD_SAME_AS_OLD:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser igual à atual");
+            case IS_EMPTY:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser vazia");
+            case USER_NOT_FOUND:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
+            default:
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
