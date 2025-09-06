@@ -1,14 +1,12 @@
 package com.esteiradev.usuario.controllers;
 
-import com.esteiradev.usuario.dto.UserDTO;
 import com.esteiradev.usuario.dto.UserPasswordUpdateDto;
 import com.esteiradev.usuario.dto.UserUpdateDto;
 import com.esteiradev.usuario.enums.PasswordUpdateResult;
 import com.esteiradev.usuario.model.UserModel;
 import com.esteiradev.usuario.service.UserService;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.esteiradev.usuario.service.impl.AcessValidationService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -35,6 +33,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    AcessValidationService acessValidationService;
+
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserModel>> getAllUsers(@PageableDefault(page =0, size =10, sort = "userId", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -45,7 +46,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getOneUser(@PathVariable(value = "userId")UUID userId) {
+    public ResponseEntity<Object> getOneUser(@PathVariable(value = "userId")UUID userId, Authentication authentication) {
+        acessValidationService.validateSameUser(userId, authentication);
         Optional<UserModel> userModelOptional = userService.findByUserId(userId);
         if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
@@ -56,7 +58,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable(value = "userId")UUID userId) {
+    public ResponseEntity<Object> deleteUser(@PathVariable(value = "userId")UUID userId, Authentication authentication) {
+        acessValidationService.validateSameUser(userId, authentication);
         Optional<UserModel> userModelOptional = userService.findById(userId);
         if(!userModelOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
@@ -68,7 +71,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{userId}")
-    public ResponseEntity<?> updatePartialUser(@PathVariable(value = "userId")UUID userId, @RequestBody UserUpdateDto dto) {
+    public ResponseEntity<?> updatePartialUser(@PathVariable(value = "userId")UUID userId, @RequestBody UserUpdateDto dto, Authentication authentication) {
+        acessValidationService.validateSameUser(userId, authentication);
         Optional<UserModel> userModelOptional = userService.findById(userId);
         if(!userModelOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
@@ -93,10 +97,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{userId}/password")
-    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @RequestBody UserPasswordUpdateDto dto, Principal principal){
-        if(!userService.isCurrent(userId, principal.getName())){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
-        }
+    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @RequestBody UserPasswordUpdateDto dto, Authentication authentication){
+        acessValidationService.validateSameUser(userId, authentication);
 
         PasswordUpdateResult result = userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
         switch (result) {
