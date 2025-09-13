@@ -23,18 +23,18 @@ public class UserDTO {
 
     private UUID userId;
 
-    @NotBlank(groups = UserView.RegistrationPost.class)
+    @NotBlank(groups = UserView.RegistrationPost.class, message = "O Nome é Obrigatório")
     @Size(min = 3, max = 50)
     @JsonView({UserView.RegistrationPost.class, UserView.UserPut.class})
     private String name;
 
-    @NotBlank(groups = UserView.RegistrationPost.class)
+    @NotBlank(groups = UserView.RegistrationPost.class, message = "O Email é Obrigatório")
     @Email(groups = UserView.RegistrationPost.class)
     @JsonView(UserView.RegistrationPost.class)
     private String email;
 
-    @NotBlank(groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class})
-    @Size(min = 6, max =20, groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class})
+    @NotBlank(groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class}, message = "A senha é obrigatória")
+    @Size(min = 6, max =20, groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class}, message = "A senha deve ter no minimo 6 caracteres")
     @JsonView({UserView.RegistrationPost.class, UserView.PasswordPut.class})
     private String password;
 
