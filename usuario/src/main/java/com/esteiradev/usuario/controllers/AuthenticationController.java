@@ -85,7 +85,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginDto loginDto){
+    public ResponseEntity<JwtDto> login(@Validated @RequestBody LoginDto loginDto){
         Authentication authentication =authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
