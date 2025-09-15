@@ -11,6 +11,12 @@ import java.util.UUID;
 public class AcessValidationService {
     public void validateSameUser(UUID userId, Authentication authentication)  {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+            return;
+        }
+
         if(!userDetails.getUserId().equals(userId)){
             throw new AccessDeniedException("Acesso Negado!");
         }
