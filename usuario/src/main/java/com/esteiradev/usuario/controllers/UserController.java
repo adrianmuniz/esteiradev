@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -71,7 +72,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{userId}")
-    public ResponseEntity<?> updatePartialUser(@PathVariable(value = "userId")UUID userId, @RequestBody UserUpdateDto dto, Authentication authentication) {
+    public ResponseEntity<?> updatePartialUser(@PathVariable(value = "userId")UUID userId, @Validated  @RequestBody UserUpdateDto dto, Authentication authentication) {
         acessValidationService.validateSameUser(userId, authentication);
         Optional<UserModel> userModelOptional = userService.findById(userId);
         if(!userModelOptional.isPresent()){
@@ -97,7 +98,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{userId}/password")
-    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @RequestBody UserPasswordUpdateDto dto, Authentication authentication){
+    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @Validated @RequestBody UserPasswordUpdateDto dto, Authentication authentication){
         acessValidationService.validateSameUser(userId, authentication);
 
         PasswordUpdateResult result = userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
@@ -109,7 +110,7 @@ public class UserController {
             case NEW_PASSWORD_SAME_AS_OLD:
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser igual à atual");
             case IS_EMPTY:
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser vazia");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser nula");
             case USER_NOT_FOUND:
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
             default:

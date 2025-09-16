@@ -51,7 +51,7 @@ public class AuthenticationController {
     @PostMapping("/singup")
     public ResponseEntity<Object> registerUser(@RequestBody @Validated(UserDTO.UserView.RegistrationPost.class) @JsonView(UserDTO.UserView.RegistrationPost.class) UserDTO userDTO) {
         if (userService.existsByEmail(userDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Esse Email já está sendo utilizado");
         }
         RoleModel roleModel = roleService.findByRoleName(RoleType.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is Not Found."));
@@ -85,7 +85,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginDto loginDto){
+    public ResponseEntity<JwtDto> login(@Validated @RequestBody LoginDto loginDto){
         Authentication authentication =authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
