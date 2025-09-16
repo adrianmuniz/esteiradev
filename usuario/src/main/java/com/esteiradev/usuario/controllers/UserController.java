@@ -98,7 +98,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{userId}/password")
-    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @RequestBody UserPasswordUpdateDto dto, Authentication authentication){
+    public ResponseEntity<?> updatePassword(@PathVariable(value = "userId")UUID userId, @Validated @RequestBody UserPasswordUpdateDto dto, Authentication authentication){
         acessValidationService.validateSameUser(userId, authentication);
 
         PasswordUpdateResult result = userService.updatePassword(userId, dto.getOldPassword(), dto.getNewPassword());
@@ -110,7 +110,7 @@ public class UserController {
             case NEW_PASSWORD_SAME_AS_OLD:
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser igual à atual");
             case IS_EMPTY:
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser vazia");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nova senha não pode ser nula");
             case USER_NOT_FOUND:
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
             default:
