@@ -22,3 +22,8 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+
+esteiradev:
+  auth:
+    jwtSecret: LWe9ZnUj7XjEOc6bq2QX0rL7zK+qL4YrbnYdElyxlrKZtAqg3uQqKq4DdNV/pRZcMRlcGmTVmX1zGKrppkxI6A==
+    jwtExpirationMs: 14400000
