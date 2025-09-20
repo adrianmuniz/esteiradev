@@ -31,6 +31,10 @@ public class JwtProvider {
                 .getBody();
     }
 
+    public String getRoles(String token) {
+        return (String) getAllClaimsFromJwt(token).get("roles");
+    }
+
     public boolean validateJwt(String authToken) {
         try {
             Jwts.parser().setSigningKey(getSigningKey()).parseClaimsJws(authToken);

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class EsteiraController {
     @Autowired
     EsteiraService esteiraService;
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{userId}/criar")
     public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId,@RequestBody @Validated EsteiraDto esteiraDto){
         var esteiraModel = new EsteiraModel();
@@ -37,6 +39,8 @@ public class EsteiraController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraService.save(esteiraModel));
     }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<EsteiraModel>> getAllEsteiras(SpecificationTemplate.EsteiraSpec spec,
                                                      @PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {
@@ -45,6 +49,7 @@ public class EsteiraController {
         return ResponseEntity.status(HttpStatus.OK).body(esteiraModelPage);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{esteiraId}")
     public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
@@ -55,6 +60,7 @@ public class EsteiraController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{esteiraId}")
     public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
         Optional<EsteiraModel> esteira = esteiraService.findById(esteiraId);
@@ -65,6 +71,7 @@ public class EsteiraController {
         return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping("/{esteiraId}")
     public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @RequestBody EsteiraDto esteiraDto){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
