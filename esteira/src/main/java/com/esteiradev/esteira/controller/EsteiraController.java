@@ -1,6 +1,7 @@
 package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.EsteiraDto;
+import com.esteiradev.esteira.dto.UpdateEsteiraDto;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.specifications.SpecificationTemplate;
@@ -31,7 +32,7 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{userId}/criar")
-    public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId,@RequestBody @Validated EsteiraDto esteiraDto){
+    public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId, @Validated @RequestBody EsteiraDto esteiraDto){
         var esteiraModel = new EsteiraModel();
         BeanUtils.copyProperties(esteiraDto, esteiraModel);
         esteiraModel.setUserId(userId);
@@ -73,13 +74,13 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping("/{esteiraId}")
-    public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @RequestBody EsteiraDto esteiraDto){
+    public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @Validated @RequestBody UpdateEsteiraDto updateEsteiraDto){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         } else {
             var esteiraModel = esteiraModelOptional.get();
-            esteiraModel.setTitulo(esteiraDto.getTitulo());
+            esteiraModel.setTitulo(updateEsteiraDto.getTitulo());
             esteiraService.save(esteiraModel);
 
             return ResponseEntity.status(HttpStatus.OK).body(esteiraModel);
