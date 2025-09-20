@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,6 @@ public class EsteiraController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(esteiraService.save(esteiraModel));
     }
-
     @GetMapping
     public ResponseEntity<Page<EsteiraModel>> getAllEsteiras(SpecificationTemplate.EsteiraSpec spec,
                                                      @PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {

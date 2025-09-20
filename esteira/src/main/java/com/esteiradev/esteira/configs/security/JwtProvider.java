@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Base64;
 
 @Log4j2
@@ -13,10 +12,13 @@ import java.util.Base64;
 public class JwtProvider {
     @Value("${esteiradev.auth.jwtSecret}")
     private String jwtSecret;
+    private byte[] getSigningKey() {
+        return Base64.getDecoder().decode(jwtSecret);
+    }
 
     public String getSubjectFromJwt(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
+                .setSigningKey(getSigningKey())
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -24,14 +26,14 @@ public class JwtProvider {
 
     public Claims getAllClaimsFromJwt(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
+                .setSigningKey(getSigningKey())
                 .parseClaimsJws(token)
                 .getBody();
     }
 
     public boolean validateJwt(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(getSigningKey()).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
