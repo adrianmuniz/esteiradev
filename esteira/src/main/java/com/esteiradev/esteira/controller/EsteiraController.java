@@ -69,22 +69,24 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{esteiraId}")
-    public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId){
-        Optional<EsteiraModel> esteira = esteiraService.findById(esteiraId);
-        if (!esteira.isPresent()) {
+    public ResponseEntity<Object> delete(@PathVariable(value = "esteiraId") UUID esteiraId, Authentication authentication){
+        Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
+        if (!esteiraModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         }
-        esteiraService.delete(esteira.get());
+        acessValidationService.validateSameUser(esteiraModelOptional.get().getUserId(), authentication);
+        esteiraService.delete(esteiraModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("Esteira Deletada com Sucesso");
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping("/{esteiraId}")
-    public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @Validated @RequestBody UpdateEsteiraDto updateEsteiraDto){
+    public ResponseEntity<Object> update(@PathVariable(value = "esteiraId") UUID esteiraId, @Validated @RequestBody UpdateEsteiraDto updateEsteiraDto, Authentication authentication){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         } else {
+            acessValidationService.validateSameUser(esteiraModelOptional.get().getUserId(), authentication);
             var esteiraModel = esteiraModelOptional.get();
             esteiraModel.setTitulo(updateEsteiraDto.getTitulo());
             esteiraService.save(esteiraModel);
