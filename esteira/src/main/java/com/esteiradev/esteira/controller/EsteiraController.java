@@ -4,6 +4,7 @@ import com.esteiradev.esteira.dto.EsteiraDto;
 import com.esteiradev.esteira.dto.UpdateEsteiraDto;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.services.impl.AcessValidationService;
 import com.esteiradev.esteira.specifications.SpecificationTemplate;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,9 @@ public class EsteiraController {
 
     @Autowired
     EsteiraService esteiraService;
+
+    @Autowired
+    AcessValidationService acessValidationService;
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{userId}/criar")
@@ -52,11 +57,12 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{esteiraId}")
-    public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId){
+    public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId, Authentication authentication){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
         } else {
+            acessValidationService.validateSameUser(esteiraModelOptional.get().getUserId(), authentication);
             return ResponseEntity.status(HttpStatus.OK).body(esteiraModelOptional.get());
         }
     }

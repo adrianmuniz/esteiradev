@@ -19,9 +19,4 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> handleBadCredentials(BadCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos");
-    }
 }

@@ -1,5 +1,7 @@
 package com.esteiradev.esteira.configs.security;
 
+import com.esteiradev.esteira.exceptions.CustomAccessDeniedHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -23,6 +25,9 @@ public class WebSecurityConfig {
 
     private final AuthenticationEntryPointImpl authenticationEntryPoint;
     private final AuthenticationJwtFilter authenticationJwtFilter;
+
+    @Autowired
+    CustomAccessDeniedHandler customAccessDeniedHandler;
 
     public WebSecurityConfig(AuthenticationEntryPointImpl authenticationEntryPoint,
                              AuthenticationJwtFilter authenticationJwtFilter) {
@@ -52,6 +57,7 @@ public class WebSecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**").permitAll()
