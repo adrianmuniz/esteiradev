@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +33,7 @@ public class CardController {
     @Autowired
     EsteiraService esteiraService;
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
     public ResponseEntity<Object> createCard(@PathVariable UUID esteiraId,
                                              @RequestBody CardDto dto){
@@ -44,6 +46,7 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(cardModel));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<CardModel>> getAllCards(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         Page<CardModel> cardModelPage = null;
@@ -51,6 +54,7 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body(cardModelPage);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID id){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
@@ -61,6 +65,7 @@ public class CardController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID id){
         Optional<CardModel> cardModel = cardService.findByIdWithEsteira(id);
@@ -71,6 +76,7 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body("Card Deletado com Sucesso");
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID id, @RequestBody CardDto dto){
         Optional<CardModel> cardModelOptional = cardService.findByIdWithEsteira(id);
