@@ -1,6 +1,7 @@
 package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.CardDto;
+import com.esteiradev.esteira.enums.CardStatus;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.CardService;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -41,13 +43,14 @@ public class CardController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
     public ResponseEntity<Object> createCard(@PathVariable UUID esteiraId,
-                                             @RequestBody CardDto dto){
+                                             @Validated @RequestBody CardDto dto){
         var cardModel = new CardModel();
-        BeanUtils.copyProperties(dto, cardModel);
-
         var esteiraModel = esteiraService.findById(esteiraId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
         cardModel.setEsteiraModel(esteiraModel);
+        cardModel.setStatus(CardStatus.TODO);
+        BeanUtils.copyProperties(dto, cardModel);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(cardModel));
     }
 
@@ -85,7 +88,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID cardId, @RequestBody CardDto dto,Authentication authentication){
+    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardDto dto, Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
@@ -93,20 +96,20 @@ public class CardController {
         acessValidationService.validateSameUser(optionalCardModel.get().getUserId(), authentication);
         var cardModel = optionalCardModel.get();
 
-        if(dto.title() != null){
-            cardModel.setTitle(dto.title());
+        if(dto.getTitle() != null){
+            cardModel.setTitle(dto.getTitle());
         }
-        if(dto.description() != null){
-            cardModel.setDescription(dto.description());
+        if(dto.getDescription() != null){
+            cardModel.setDescription(dto.getDescription());
         }
-        if(dto.status() != null){
-            cardModel.setStatus(dto.status());
+        if(dto.getStatus() != null){
+            cardModel.setStatus(dto.getStatus());
         }
-        if(dto.position() != null){
-            cardModel.setPosition(dto.position());
+        if(dto.getPosition() != null){
+            cardModel.setPosition(dto.getPosition());
         }
-        if(dto.esteiraId() != null && !dto.esteiraId().equals(cardModel.getEsteiraModel().getEsteiraId())){
-            EsteiraModel novaEsteira = esteiraService.findById(dto.esteiraId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
+        if(dto.getEsteiraId() != null && !dto.getEsteiraId().equals(cardModel.getEsteiraModel().getEsteiraId())){
+            EsteiraModel novaEsteira = esteiraService.findById(dto.getEsteiraId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
             cardModel.setEsteiraModel(novaEsteira);
         }
         cardService.save(cardModel);
