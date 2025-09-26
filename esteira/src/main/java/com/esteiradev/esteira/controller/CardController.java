@@ -61,8 +61,8 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID id, Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
+    public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID cardId, Authentication authentication){
+        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         } else {
@@ -73,8 +73,8 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID id,Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
+    public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID cardId,Authentication authentication){
+        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
@@ -85,8 +85,8 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID id, @RequestBody CardDto dto,Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
+    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID cardId, @RequestBody CardDto dto,Authentication authentication){
+        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
