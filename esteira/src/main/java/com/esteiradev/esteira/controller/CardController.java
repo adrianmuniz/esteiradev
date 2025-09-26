@@ -5,6 +5,7 @@ import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.services.impl.AcessValidationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +34,9 @@ public class CardController {
 
     @Autowired
     EsteiraService esteiraService;
+
+    @Autowired
+    AcessValidationService acessValidationService;
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
@@ -56,34 +61,37 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID id){
+    public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID id, Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         } else {
+            acessValidationService.validateSameUser(optionalCardModel.get().getUserId(), authentication);
             return ResponseEntity.status(HttpStatus.OK).body(optionalCardModel.get());
         }
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID id){
-        Optional<CardModel> cardModel = cardService.findByIdWithEsteira(id);
-        if (!cardModel.isPresent()) {
+    public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID id,Authentication authentication){
+        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
+        if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
-        cardService.delete(cardModel.get());
+        acessValidationService.validateSameUser(optionalCardModel.get().getUserId(), authentication);
+        cardService.delete(optionalCardModel.get());
         return ResponseEntity.status(HttpStatus.OK).body("Card Deletado com Sucesso");
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID id, @RequestBody CardDto dto){
-        Optional<CardModel> cardModelOptional = cardService.findByIdWithEsteira(id);
-        if (!cardModelOptional.isPresent()) {
+    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID id, @RequestBody CardDto dto,Authentication authentication){
+        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(id);
+        if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
-        var cardModel = cardModelOptional.get();
+        acessValidationService.validateSameUser(optionalCardModel.get().getUserId(), authentication);
+        var cardModel = optionalCardModel.get();
 
         if(dto.title() != null){
             cardModel.setTitle(dto.title());
