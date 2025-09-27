@@ -2,6 +2,7 @@ package com.esteiradev.esteira.dto;
 
 import com.esteiradev.esteira.enums.CardStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -13,13 +14,8 @@ public class CardDto {
     @Size(min = 3, message = "Titulo deve ter no mínimo 3 caracteres")
     String title;
 
+    @NotBlank(message = "A descrição é obrigatória")
     String description;
-
-    CardStatus status;
-
-    Integer position;
-
-    UUID esteiraId;
 
     UUID userId;
 }

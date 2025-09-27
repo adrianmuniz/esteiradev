@@ -1,6 +1,7 @@
 package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.CardDto;
+import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.enums.CardStatus;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
@@ -49,6 +50,7 @@ public class CardController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
         cardModel.setEsteiraModel(esteiraModel);
         cardModel.setStatus(CardStatus.TODO);
+        cardModel.setPosition(1);
         BeanUtils.copyProperties(dto, cardModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(cardModel));
@@ -88,7 +90,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardDto dto, Authentication authentication){
+    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardUpdateDto dto, Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
