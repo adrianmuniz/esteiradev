@@ -1,7 +1,9 @@
 package com.esteiradev.esteira.configs.security;
 
 import com.esteiradev.esteira.exceptions.CustomAccessDeniedHandler;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -76,5 +78,12 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer customizer() {
+        return builder -> builder.featuresToEnable(
+                DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT
+        );
     }
 }

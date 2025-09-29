@@ -11,10 +11,11 @@ import java.util.UUID;
 @Data
 public class CardDto {
     @NotBlank(message = "Titulo Obrigatório")
-    @Size(min = 3, message = "Titulo deve ter no mínimo 3 caracteres")
+    @Size(min = 3, message = "Titulo deve ter no mínimo 3 caracteres", max = 50)
     String title;
 
-    @NotBlank(message = "A descrição é obrigatória")
+    @NotNull(message = "Descrição Obrigatória")
+    @Size(min = 5, message = "Descrição deve ter no mínimo 5 caracteres", max = 255)
     String description;
 
     UUID userId;
