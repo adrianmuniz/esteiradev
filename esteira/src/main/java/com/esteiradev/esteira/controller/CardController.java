@@ -5,8 +5,10 @@ import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.enums.CardStatus;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
+import com.esteiradev.esteira.model.SprintModel;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.services.SprintService;
 import com.esteiradev.esteira.services.impl.AcessValidationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -23,13 +25,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
 @RestController
 @CrossOrigin(origins = "x", maxAge = 3600)
-@RequestMapping("/cards")
+@RequestMapping("/esteira/cards")
 public class CardController {
 
     @Autowired
@@ -39,18 +42,25 @@ public class CardController {
     EsteiraService esteiraService;
 
     @Autowired
+    SprintService sprintService;
+
+    @Autowired
     AcessValidationService acessValidationService;
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
     public ResponseEntity<Object> createCard(@PathVariable UUID esteiraId,
                                              @Validated @RequestBody CardDto dto){
-        var cardModel = new CardModel();
         var esteiraModel = esteiraService.findById(esteiraId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
+
+        Optional<SprintModel> sprintModel = sprintService.findBySprintId(dto.getSprintId());
+        var cardModel = new CardModel();
+        cardModel.setSprint(sprintModel.get());
         cardModel.setEsteiraModel(esteiraModel);
         cardModel.setStatus(CardStatus.TODO);
         cardModel.setPosition(1);
+        cardModel.setDateCreate(LocalDateTime.now());
         BeanUtils.copyProperties(dto, cardModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(cardModel));
