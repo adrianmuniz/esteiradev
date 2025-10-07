@@ -23,4 +23,9 @@ public class SprintServiceImpl implements SprintService {
     public Optional<SprintModel> findBySprintId(Integer sprintId) {
         return sprintRepository.findBySprintId(sprintId);
     }
+
+    @Override
+    public void delete(SprintModel sprintModel) {
+        sprintRepository.delete(sprintModel);
+    }
 }

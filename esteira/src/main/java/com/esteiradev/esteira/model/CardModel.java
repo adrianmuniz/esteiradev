@@ -44,7 +44,7 @@ public class CardModel {
     @JoinColumn(name = "esteira_id")
     private EsteiraModel esteiraModel;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = true ,fetch = FetchType.LAZY)
     @JoinColumn(name = "sprint_id")
     private SprintModel sprint;
 }

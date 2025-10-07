@@ -36,4 +36,9 @@ public class CardServiceImpl implements CardService {
     public void delete(CardModel cardModel) {
         cardRepository.delete(cardModel);
     }
+
+    @Override
+    public boolean findBySprintId(Integer sprintId) {
+        return cardRepository.existsBySprint_SprintId(sprintId);
+    }
 }

@@ -20,4 +20,6 @@ public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpeci
 
     @Query("SELECT c FROM CardModel c JOIN FETCH c.esteiraModel WHERE c.id = :id")
     Optional<CardModel> findByIdWithEsteira(UUID id);
+
+    boolean existsBySprint_SprintId(Integer sprintId);
 }

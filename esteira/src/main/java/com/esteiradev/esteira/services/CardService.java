@@ -16,4 +16,6 @@ public interface CardService {
     Optional<CardModel> findByIdWithEsteira(UUID id);
 
     void delete(CardModel cardModel);
+
+    boolean findBySprintId(Integer sprintId);
 }

@@ -56,7 +56,9 @@ public class CardController {
 
         Optional<SprintModel> sprintModel = sprintService.findBySprintId(dto.getSprintId());
         var cardModel = new CardModel();
-        cardModel.setSprint(sprintModel.get());
+        if(dto.getSprintId() != null){
+            cardModel.setSprint(sprintModel.get());
+        }
         cardModel.setEsteiraModel(esteiraModel);
         cardModel.setStatus(CardStatus.TODO);
         cardModel.setPosition(1);

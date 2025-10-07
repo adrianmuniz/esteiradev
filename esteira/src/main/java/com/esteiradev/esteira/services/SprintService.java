@@ -8,4 +8,6 @@ public interface SprintService {
     Object save(SprintModel sprint);
 
     Optional<SprintModel> findBySprintId(Integer sprintId);
+
+    void delete(SprintModel sprintModel);
 }
