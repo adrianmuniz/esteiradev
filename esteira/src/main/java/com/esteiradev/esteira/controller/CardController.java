@@ -50,7 +50,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
-    public ResponseEntity<Object> createCard(@PathVariable UUID esteiraId,
+    public ResponseEntity<Object> create(@PathVariable UUID esteiraId,
                                              @Validated @RequestBody CardDto dto){
         var esteiraModel = esteiraService.findById(esteiraId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
@@ -71,7 +71,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<CardModel>> getAllCards(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<Page<CardModel>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         Page<CardModel> cardModelPage = null;
         cardModelPage = cardService.findAllWithEsteira(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(cardModelPage);
@@ -79,7 +79,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getOneCard(@PathVariable(value = "id") UUID cardId, Authentication authentication){
+    public ResponseEntity<Object> get(@PathVariable(value = "id") UUID cardId, Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
@@ -91,7 +91,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCard(@PathVariable(value = "id") UUID cardId,Authentication authentication){
+    public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID cardId,Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
@@ -103,7 +103,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateCardPartial(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardUpdateDto dto, Authentication authentication){
+    public ResponseEntity<Object> update(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardUpdateDto dto, Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
