@@ -3,6 +3,7 @@ package com.esteiradev.esteira.services.impl;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.repositories.EsteiraRepository;
 import com.esteiradev.esteira.services.EsteiraService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ public class EsteiraServiceImpl implements EsteiraService {
 
     @Autowired
     EsteiraRepository esteiraRepository;
+    @Transactional
     @Override
     public EsteiraModel save(EsteiraModel esteiraModel) {
         return esteiraRepository.save(esteiraModel);
@@ -33,6 +35,7 @@ public class EsteiraServiceImpl implements EsteiraService {
         return esteiraRepository.findById(esteiraId);
     }
 
+    @Transactional
     @Override
     public void delete(EsteiraModel esteiraModel) {
         esteiraRepository.delete(esteiraModel);

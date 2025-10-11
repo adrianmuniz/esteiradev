@@ -1,6 +1,7 @@
 package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.CardDto;
+import com.esteiradev.esteira.dto.CardStatusUpdateDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.enums.CardStatus;
 import com.esteiradev.esteira.model.CardModel;
@@ -128,5 +129,20 @@ public class CardController {
         }
         cardService.save(cardModel);
         return ResponseEntity.status(HttpStatus.OK).body(cardModel);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PatchMapping("/{id}/move")
+    public ResponseEntity<Void> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody CardStatusUpdateDto dto){
+        Optional<CardModel> cardOpt = cardService.findByIdWithEsteira(cardId);
+        Optional<EsteiraModel> esteiraOpt = esteiraService.findById(dto.getEsteiraId());
+        if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
+            throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
+        }
+        var card = cardOpt.get();
+        card.setStatus(dto.getNewStatus());
+        card.getEsteiraModel().setEsteiraId(dto.getEsteiraId());
+        cardService.save(card);
+        return ResponseEntity.ok().build();
     }
 }
