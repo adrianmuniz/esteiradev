@@ -127,6 +127,7 @@ public class CardController {
             EsteiraModel novaEsteira = esteiraService.findById(dto.getEsteiraId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
             cardModel.setEsteiraModel(novaEsteira);
         }
+        cardModel.setDateUpdated(LocalDateTime.now());
         cardService.save(cardModel);
         return ResponseEntity.status(HttpStatus.OK).body(cardModel);
     }
