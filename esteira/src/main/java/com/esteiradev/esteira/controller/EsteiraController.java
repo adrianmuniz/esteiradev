@@ -40,7 +40,7 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{userId}/criar")
-    public ResponseEntity<Object> criarEsteira(@PathVariable(name = "userId") UUID userId, @Validated @RequestBody EsteiraDto esteiraDto,@RequestHeader("Authorization") String authHeader){
+    public ResponseEntity<Object> create(@PathVariable(name = "userId") UUID userId, @Validated @RequestBody EsteiraDto esteiraDto,@RequestHeader("Authorization") String authHeader){
         if(userClient.userExists(userId, authHeader) == false){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         }
@@ -54,7 +54,7 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<EsteiraModel>> getAllEsteiras(@PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {
+    public ResponseEntity<Page<EsteiraModel>> getAll(@PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {
         Page<EsteiraModel> esteiraModelPage = null;
         esteiraModelPage = esteiraService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(esteiraModelPage);
