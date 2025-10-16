@@ -26,11 +26,6 @@ public class EsteiraServiceImpl implements EsteiraService {
     }
 
     @Override
-    public List<EsteiraModel> findAll() {
-        return esteiraRepository.findAll();
-    }
-
-    @Override
     public Optional<EsteiraModel> findById(UUID esteiraId) {
         return esteiraRepository.findById(esteiraId);
     }
@@ -42,7 +37,7 @@ public class EsteiraServiceImpl implements EsteiraService {
     }
 
     @Override
-    public Page<EsteiraModel> findAll(Specification<EsteiraModel> spec, Pageable pageable) {
-        return esteiraRepository.findAll(spec, pageable);
+    public Page<EsteiraModel> findAll(Pageable pageable) {
+        return esteiraRepository.findAll(pageable);
     }
 }

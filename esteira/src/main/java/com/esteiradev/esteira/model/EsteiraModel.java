@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class EsteiraModel {
     @Column(nullable = false, length = 30)
     private String titulo;
 
+    @JsonIgnore
     @Column(nullable = false, length = 30)
     private UUID userId;
 }

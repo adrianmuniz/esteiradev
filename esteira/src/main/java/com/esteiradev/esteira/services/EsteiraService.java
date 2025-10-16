@@ -12,11 +12,9 @@ import java.util.UUID;
 public interface EsteiraService {
     EsteiraModel save(EsteiraModel esteiraModel);
 
-    List<EsteiraModel> findAll();
-
     Optional<EsteiraModel> findById(UUID esteiraId);
 
     void delete(EsteiraModel esteiraModel);
 
-    Page<EsteiraModel> findAll(Specification<EsteiraModel> spec, Pageable pageable);
+    Page<EsteiraModel> findAll(Pageable pageable);
 }

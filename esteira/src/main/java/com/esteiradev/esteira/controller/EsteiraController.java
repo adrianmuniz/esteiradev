@@ -6,7 +6,6 @@ import com.esteiradev.esteira.dto.UpdateEsteiraDto;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.services.impl.AcessValidationService;
-import com.esteiradev.esteira.specifications.SpecificationTemplate;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +54,9 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<EsteiraModel>> getAllEsteiras(SpecificationTemplate.EsteiraSpec spec,
-                                                     @PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {
+    public ResponseEntity<Page<EsteiraModel>> getAllEsteiras(@PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {
         Page<EsteiraModel> esteiraModelPage = null;
-        esteiraModelPage = esteiraService.findAll(spec, pageable);
+        esteiraModelPage = esteiraService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(esteiraModelPage);
     }
 
