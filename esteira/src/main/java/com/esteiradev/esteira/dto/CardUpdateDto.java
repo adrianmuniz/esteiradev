@@ -19,6 +19,4 @@ public class CardUpdateDto {
     CardStatus status;
 
     Integer position;
-
-    UUID esteiraId;
 }

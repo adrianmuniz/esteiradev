@@ -123,10 +123,6 @@ public class CardController {
         if(dto.getPosition() != null){
             cardModel.setPosition(dto.getPosition());
         }
-        if(dto.getEsteiraId() != null && !dto.getEsteiraId().equals(cardModel.getEsteiraModel().getEsteiraId())){
-            EsteiraModel novaEsteira = esteiraService.findById(dto.getEsteiraId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
-            cardModel.setEsteiraModel(novaEsteira);
-        }
         cardModel.setDateUpdated(LocalDateTime.now());
         cardService.save(cardModel);
         return ResponseEntity.status(HttpStatus.OK).body(cardModel);
