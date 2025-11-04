@@ -3,6 +3,7 @@ package com.esteiradev.esteira.controller;
 import com.esteiradev.esteira.client.UserClient;
 import com.esteiradev.esteira.dto.EsteiraDto;
 import com.esteiradev.esteira.dto.UpdateEsteiraDto;
+import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.services.impl.AcessValidationService;
@@ -40,12 +41,13 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{userId}/criar")
-    public ResponseEntity<Object> create(@PathVariable(name = "userId") UUID userId, @Validated @RequestBody EsteiraDto esteiraDto,@RequestHeader("Authorization") String authHeader){
+    public ResponseEntity<Object> create(@PathVariable(name = "userId") UUID userId, @Validated @RequestBody EsteiraDto dto,@RequestHeader("Authorization") String authHeader){
         if(userClient.userExists(userId, authHeader) == false){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
         }
         var esteiraModel = new EsteiraModel();
-        BeanUtils.copyProperties(esteiraDto, esteiraModel);
+        esteiraModel.setType(dto.getType());
+        BeanUtils.copyProperties(dto, esteiraModel);
         esteiraModel.setUserId(userId);
         esteiraService.save(esteiraModel);
 

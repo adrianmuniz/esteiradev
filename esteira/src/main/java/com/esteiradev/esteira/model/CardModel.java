@@ -1,12 +1,13 @@
 package com.esteiradev.esteira.model;
 
-import com.esteiradev.esteira.enums.CardStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -22,12 +23,15 @@ public class CardModel {
 
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    private CardStatus status;
-
     private Integer position;
 
+    private List<String> situation;
+
     private Integer estimateHours;
+
+    private Integer hoursUsed;
+
+    private Integer hoursRemainning;
 
     @CreatedDate
     @Column(updatable = false)

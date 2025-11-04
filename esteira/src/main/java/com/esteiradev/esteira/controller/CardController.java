@@ -1,9 +1,8 @@
 package com.esteiradev.esteira.controller;
 
 import com.esteiradev.esteira.dto.CardDto;
-import com.esteiradev.esteira.dto.CardStatusUpdateDto;
+import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
-import com.esteiradev.esteira.enums.CardStatus;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;
@@ -61,9 +60,10 @@ public class CardController {
             cardModel.setSprint(sprintModel.get());
         }
         cardModel.setEsteiraModel(esteiraModel);
-        cardModel.setStatus(CardStatus.TODO);
-        cardModel.setPosition(1);
+        cardModel.setPosition(0);
         cardModel.setDateCreate(LocalDateTime.now());
+        cardModel.setHoursUsed(0);
+        cardModel.setHoursRemainning(dto.getEstimateHours());
         BeanUtils.copyProperties(dto, cardModel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(cardModel));
@@ -117,12 +117,6 @@ public class CardController {
         if(dto.getDescription() != null){
             cardModel.setDescription(dto.getDescription());
         }
-        if(dto.getStatus() != null){
-            cardModel.setStatus(dto.getStatus());
-        }
-        if(dto.getPosition() != null){
-            cardModel.setPosition(dto.getPosition());
-        }
         cardModel.setDateUpdated(LocalDateTime.now());
         cardService.save(cardModel);
         return ResponseEntity.status(HttpStatus.OK).body(cardModel);
@@ -130,14 +124,13 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}/move")
-    public ResponseEntity<Void> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody CardStatusUpdateDto dto){
+    public ResponseEntity<Object> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody MoveCardDto dto){
         Optional<CardModel> cardOpt = cardService.findByIdWithEsteira(cardId);
         Optional<EsteiraModel> esteiraOpt = esteiraService.findById(dto.getEsteiraId());
         if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
             throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
         }
         var card = cardOpt.get();
-        card.setStatus(dto.getNewStatus());
         card.getEsteiraModel().setEsteiraId(dto.getEsteiraId());
         cardService.save(card);
         return ResponseEntity.ok().build();

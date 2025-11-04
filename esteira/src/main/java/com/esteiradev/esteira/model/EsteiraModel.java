@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.model;
 
+import com.esteiradev.esteira.enums.EsteiraType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -19,6 +20,9 @@ public class EsteiraModel {
 
     @Column(nullable = false, length = 30)
     private String titulo;
+
+    @Column(nullable = false)
+    private EsteiraType type;
 
     @JsonIgnore
     @Column(nullable = false, length = 30)
