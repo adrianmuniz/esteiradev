@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -34,7 +35,12 @@ public class UserDTO {
     private String email;
 
     @NotBlank(groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class}, message = "A senha é obrigatória")
-    @Size(min = 6, max =20, groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class}, message = "A senha deve ter no minimo 6 caracteres")
+    @Size(min = 8, max =20, groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class}, message = "A senha deve ter no minimo 8 caracteres")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).+$",
+            groups = {UserView.RegistrationPost.class, UserView.PasswordPut.class},
+            message = "A senha deve conter letra maiúscula e pelo menos um número"
+    )
     @JsonView({UserView.RegistrationPost.class, UserView.PasswordPut.class})
     private String password;
 
