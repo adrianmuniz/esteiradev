@@ -11,9 +11,9 @@ public interface CardService {
 
     CardModel save(CardModel cardModel);
 
-    Page<CardModel> findAllWithEsteira(Pageable pageable);
+    Page<CardModel> findAll(Pageable pageable);
 
-    Optional<CardModel> findByIdWithEsteira(UUID id);
+    Optional<CardModel> findById(UUID id);
 
     void delete(CardModel cardModel);
 

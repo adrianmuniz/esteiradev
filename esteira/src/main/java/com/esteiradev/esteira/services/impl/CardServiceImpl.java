@@ -25,13 +25,13 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Page<CardModel> findAllWithEsteira(Pageable pageable) {
-        return cardRepository.findAllWithEsteira(pageable);
+    public Page<CardModel> findAll(Pageable pageable) {
+        return cardRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<CardModel> findByIdWithEsteira(UUID id) {
-        return cardRepository.findByIdWithEsteira(id);
+    public Optional<CardModel> findById(UUID id) {
+        return cardRepository.findById(id);
     }
 
     @Transactional

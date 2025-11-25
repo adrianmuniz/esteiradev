@@ -73,14 +73,14 @@ public class CardController {
     @GetMapping
     public ResponseEntity<Page<CardModel>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         Page<CardModel> cardModelPage = null;
-        cardModelPage = cardService.findAllWithEsteira(pageable);
+        cardModelPage = cardService.findAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(cardModelPage);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> get(@PathVariable(value = "id") UUID cardId, Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
+        Optional<CardModel> optionalCardModel = cardService.findById(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         } else {
@@ -92,7 +92,7 @@ public class CardController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID cardId,Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
+        Optional<CardModel> optionalCardModel = cardService.findById(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
@@ -104,18 +104,30 @@ public class CardController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardUpdateDto dto, Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findByIdWithEsteira(cardId);
+        Optional<CardModel> optionalCardModel = cardService.findById(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
         acessValidationService.validateSameUser(optionalCardModel.get().getUserId(), authentication);
         var cardModel = optionalCardModel.get();
-
         if(dto.getTitle() != null){
             cardModel.setTitle(dto.getTitle());
         }
         if(dto.getDescription() != null){
             cardModel.setDescription(dto.getDescription());
+        }
+        if(dto.getPosition() != null){
+            cardModel.setPosition(dto.getPosition());
+        }
+        if(dto.getEstimateHours() != null){
+            cardModel.setEstimateHours(dto.getEstimateHours());
+        }
+        if(dto.getSprintId() != null){
+            Optional<SprintModel> sprintOpt = sprintService.findBySprintId(dto.getSprintId());
+            if(!sprintOpt.isPresent()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sprint não Encontrada");
+            }
+            cardModel.setSprint(sprintOpt.get());
         }
         cardModel.setDateUpdated(LocalDateTime.now());
         cardService.save(cardModel);
@@ -125,7 +137,7 @@ public class CardController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}/move")
     public ResponseEntity<Object> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody MoveCardDto dto){
-        Optional<CardModel> cardOpt = cardService.findByIdWithEsteira(cardId);
+        Optional<CardModel> cardOpt = cardService.findById(cardId);
         Optional<EsteiraModel> esteiraOpt = esteiraService.findById(dto.getEsteiraId());
         if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
             throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
