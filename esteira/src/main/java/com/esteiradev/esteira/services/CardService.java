@@ -17,5 +17,5 @@ public interface CardService {
 
     void delete(CardModel cardModel);
 
-    boolean findBySprintId(Integer sprintId);
+    boolean findBySprintId(UUID sprintId);
 }

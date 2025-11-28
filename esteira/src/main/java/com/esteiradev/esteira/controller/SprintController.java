@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -37,14 +38,14 @@ public class SprintController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{sprintId}")
-    public ResponseEntity<Object> get(@PathVariable Integer sprintId){
+    public ResponseEntity<Object> get(@PathVariable UUID sprintId){
         Optional<SprintModel> sprintModel = sprintService.findBySprintId(sprintId);
         return ResponseEntity.status(HttpStatus.OK).body(sprintModel.get());
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{sprintId}")
-    public ResponseEntity<Object> delete(@PathVariable Integer sprintId){
+    public ResponseEntity<Object> delete(@PathVariable UUID sprintId){
         Optional<SprintModel> sprintModel = sprintService.findBySprintId(sprintId);
         if(!sprintModel.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sprint não Encontrado");
@@ -61,7 +62,7 @@ public class SprintController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{sprintId}")
-    public ResponseEntity<Object> update(@PathVariable Integer sprintId, @RequestBody SprintUpdateDto dto){
+    public ResponseEntity<Object> update(@PathVariable UUID sprintId, @RequestBody SprintUpdateDto dto){
         Optional<SprintModel> sprintModel = sprintService.findBySprintId(sprintId);
         if(!sprintModel.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sprint não Encontrado");

@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.persistence.Id;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface SprintRepository extends JpaRepository<SprintModel, Id> {
-    Optional<SprintModel> findBySprintId(Integer sprintId);
+    Optional<SprintModel> findBySprintId(UUID sprintId);
 }

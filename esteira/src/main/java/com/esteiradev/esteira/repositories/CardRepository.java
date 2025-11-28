@@ -19,5 +19,5 @@ public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpeci
     @EntityGraph(attributePaths = {"esteiraModel", "sprint"})
     Optional<CardModel> findById(UUID id);
 
-    boolean existsBySprint_SprintId(Integer sprintId);
+    boolean existsBySprint_SprintId(UUID sprintId);
 }

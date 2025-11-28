@@ -19,7 +19,7 @@ public class CardDto {
 
     private Integer estimateHours;
 
-    private Integer sprintId;
+    private UUID sprintId;
 
     private UUID userId;
 }

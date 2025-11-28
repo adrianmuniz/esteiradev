@@ -41,7 +41,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean findBySprintId(Integer sprintId) {
+    public boolean findBySprintId(UUID sprintId) {
         return cardRepository.existsBySprint_SprintId(sprintId);
     }
 }

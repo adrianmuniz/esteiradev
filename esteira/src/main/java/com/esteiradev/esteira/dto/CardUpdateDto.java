@@ -3,6 +3,8 @@ package com.esteiradev.esteira.dto;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class CardUpdateDto {
 
@@ -16,5 +18,5 @@ public class CardUpdateDto {
 
     private Integer estimateHours;
 
-    private Integer sprintId;
+    private UUID sprintId;
 }

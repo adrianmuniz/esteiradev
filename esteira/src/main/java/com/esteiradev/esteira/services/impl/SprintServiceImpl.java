@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SprintServiceImpl implements SprintService {
@@ -20,7 +21,7 @@ public class SprintServiceImpl implements SprintService {
     }
 
     @Override
-    public Optional<SprintModel> findBySprintId(Integer sprintId) {
+    public Optional<SprintModel> findBySprintId(UUID sprintId) {
         return sprintRepository.findBySprintId(sprintId);
     }
 
