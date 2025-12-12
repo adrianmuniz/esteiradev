@@ -3,6 +3,7 @@ package com.esteiradev.esteira.controller;
 import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
+import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;
@@ -60,6 +61,7 @@ public class CardController {
             cardModel.setSprint(sprintModel.get());
         }
         cardModel.setEsteiraModel(esteiraModel);
+        cardModel.setStatus(StatusCard.TODO);
         cardModel.setPosition(0);
         cardModel.setDateCreate(LocalDateTime.now());
         cardModel.setHoursUsed(0);

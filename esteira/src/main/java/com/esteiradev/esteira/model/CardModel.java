@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.model;
 
+import com.esteiradev.esteira.enums.StatusCard;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,7 +26,7 @@ public class CardModel {
 
     private Integer position;
 
-    private List<String> situation;
+    private StatusCard status;
 
     private Integer estimateHours;
 

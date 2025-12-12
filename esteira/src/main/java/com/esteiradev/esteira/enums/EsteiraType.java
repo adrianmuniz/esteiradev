@@ -2,12 +2,11 @@ package com.esteiradev.esteira.enums;
 
 public enum EsteiraType {
     BACKLOG(1),
-    ANALISE(2),
+    ANALYSIS(2),
     DEV(3),
-    TESTE(4),
-    QA(5),
-    RESOLVIDO(6),
-    OUTROS(7);
+    TEST(4),
+    CLOSED(5),
+    OUTHERS(6);
 
     private final int ordem;
     EsteiraType(int ordem) {
