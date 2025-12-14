@@ -3,6 +3,7 @@ package com.esteiradev.esteira.controller;
 import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
+import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
@@ -144,6 +145,14 @@ public class CardController {
         if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
             throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
         }
+
+        EsteiraType atual = cardOpt.get().getEsteiraModel().getType();
+        int nova = esteiraOpt.get().getType().getOrdem();
+
+        if(!atual.canMove(nova)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Movimentação Inválida");
+        }
+
         var card = cardOpt.get();
         card.getEsteiraModel().setEsteiraId(dto.getEsteiraId());
         cardService.save(card);

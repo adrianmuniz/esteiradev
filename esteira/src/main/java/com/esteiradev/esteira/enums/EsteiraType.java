@@ -16,4 +16,8 @@ public enum EsteiraType {
     public int getOrdem() {
         return ordem;
     }
+
+   public boolean canMove(int nova){
+        return nova == this.ordem + 1 || nova == this.ordem - 1;
+   }
 }
