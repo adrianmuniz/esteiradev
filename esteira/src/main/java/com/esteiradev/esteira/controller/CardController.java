@@ -12,6 +12,7 @@ import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.services.SprintService;
 import com.esteiradev.esteira.services.impl.AcessValidationService;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,17 +146,34 @@ public class CardController {
         if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
             throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
         }
-
         EsteiraType atual = cardOpt.get().getEsteiraModel().getType();
         int nova = esteiraOpt.get().getType().getOrdem();
 
         if(!atual.canMove(nova)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Movimentação Inválida");
         }
+        if(nova == 5){
+            closeCard(cardOpt.get());
+        } else if(atual.getOrdem() == 5 && nova != 5){
+            reopenCard(cardOpt.get(), nova);
+        }
 
         var card = cardOpt.get();
         card.getEsteiraModel().setEsteiraId(dto.getEsteiraId());
         cardService.save(card);
         return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    private void reopenCard(CardModel cardModel,int nova) {
+        cardModel.setStatus(StatusCard.TEST);
+        cardModel.setDateUpdated(LocalDateTime.now());
+        cardModel.setDateResolved(null);
+    }
+
+    @Transactional
+    public void closeCard(CardModel cardModel){
+        cardModel.setStatus(StatusCard.FECHADO);
+        cardModel.setDateResolved(LocalDateTime.now());
     }
 }
