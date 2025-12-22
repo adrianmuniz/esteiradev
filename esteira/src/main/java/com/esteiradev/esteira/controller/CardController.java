@@ -5,6 +5,7 @@ import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
+import com.esteiradev.esteira.events.EsteiraChangedEvent;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -49,6 +51,9 @@ public class CardController {
 
     @Autowired
     AcessValidationService acessValidationService;
+
+    @Autowired
+    ApplicationEventPublisher  eventPublisher;
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
@@ -138,6 +143,7 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body(cardModel);
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}/move")
     public ResponseEntity<Object> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody MoveCardDto dto){
@@ -159,8 +165,15 @@ public class CardController {
         }
 
         var card = cardOpt.get();
-        card.getEsteiraModel().setEsteiraId(dto.getEsteiraId());
+        card.setEsteiraModel(esteiraOpt.get());
         cardService.save(card);
+        eventPublisher.publishEvent(new EsteiraChangedEvent(
+                cardId,
+                atual,
+                card.getEsteiraModel().getType(),
+                null
+                )
+        );
         return ResponseEntity.ok().build();
     }
 
