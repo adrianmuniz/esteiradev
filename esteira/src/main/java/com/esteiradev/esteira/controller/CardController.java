@@ -52,9 +52,6 @@ public class CardController {
     @Autowired
     AcessValidationService acessValidationService;
 
-    @Autowired
-    ApplicationEventPublisher  eventPublisher;
-
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
     public ResponseEntity<Object> create(@PathVariable UUID esteiraId,
@@ -143,50 +140,10 @@ public class CardController {
         return ResponseEntity.status(HttpStatus.OK).body(cardModel);
     }
 
-    @Transactional
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PatchMapping("/{id}/move")
     public ResponseEntity<Object> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody MoveCardDto dto){
-        Optional<CardModel> cardOpt = cardService.findById(cardId);
-        Optional<EsteiraModel> esteiraOpt = esteiraService.findById(dto.getEsteiraId());
-        if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
-            throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
-        }
-        EsteiraType atual = cardOpt.get().getEsteiraModel().getType();
-        int nova = esteiraOpt.get().getType().getOrdem();
-
-        if(!atual.canMove(nova)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Movimentação Inválida");
-        }
-        if(nova == 5){
-            closeCard(cardOpt.get());
-        } else if(atual.getOrdem() == 5 && nova != 5){
-            reopenCard(cardOpt.get(), nova);
-        }
-
-        var card = cardOpt.get();
-        card.setEsteiraModel(esteiraOpt.get());
-        cardService.save(card);
-        eventPublisher.publishEvent(new EsteiraChangedEvent(
-                cardId,
-                atual,
-                card.getEsteiraModel().getType(),
-                null
-                )
-        );
+        cardService.moveCard(cardId, dto);
         return ResponseEntity.ok().build();
-    }
-
-    @Transactional
-    private void reopenCard(CardModel cardModel,int nova) {
-        cardModel.setStatus(StatusCard.TEST);
-        cardModel.setDateUpdated(LocalDateTime.now());
-        cardModel.setDateResolved(null);
-    }
-
-    @Transactional
-    public void closeCard(CardModel cardModel){
-        cardModel.setStatus(StatusCard.FECHADO);
-        cardModel.setDateResolved(LocalDateTime.now());
     }
 }

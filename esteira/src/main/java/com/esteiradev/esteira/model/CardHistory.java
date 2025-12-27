@@ -2,24 +2,20 @@ package com.esteiradev.esteira.model;
 
 import com.esteiradev.esteira.enums.HistoryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "TB_CARD_HISTORY")
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class CardHistory {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
     @Column(nullable = false)
@@ -35,9 +31,9 @@ public class CardHistory {
     @Column(length = 255)
     private String newValue;
 
-    @Column(nullable = false)
+    @Column
     private String changedBy;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime changedAt;
 }

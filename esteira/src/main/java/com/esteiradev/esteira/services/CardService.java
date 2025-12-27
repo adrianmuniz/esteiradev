@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.services;
 
+import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.model.CardModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface CardService {
     void delete(CardModel cardModel);
 
     boolean findBySprintId(UUID sprintId);
+
+    void moveCard(UUID cardId, MoveCardDto dto);
 }
