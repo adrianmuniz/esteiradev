@@ -7,6 +7,7 @@ import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.events.CardCreatedEvent;
 import com.esteiradev.esteira.events.EsteiraChangedEvent;
+import com.esteiradev.esteira.events.UpdatedCardEvent;
 import com.esteiradev.esteira.exceptions.NotFoundException;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
@@ -103,6 +104,11 @@ public class CardServiceImpl implements CardService {
         }
         card.setDateUpdated(LocalDateTime.now());
         cardRepository.save(card);
+
+        eventPublisher.publishEvent(new UpdatedCardEvent(
+                cardId,
+                card.getUserId()
+        ));
         return card;
     }
 
@@ -154,9 +160,8 @@ public class CardServiceImpl implements CardService {
                         cardId,
                         atual,
                         card.getEsteiraModel().getType(),
-                        null
-                )
-        );
+                        card.getUserId()
+                ));
     }
 
     @Transactional

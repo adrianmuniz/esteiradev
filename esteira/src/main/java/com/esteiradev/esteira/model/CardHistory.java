@@ -23,16 +23,16 @@ public class CardHistory {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private HistoryType type;
+    private HistoryType typeHistory;
 
     @Column(length = 255)
-    private String oldValue;
+    private String oldEsteira;
 
     @Column(length = 255)
-    private String newValue;
+    private String newEsteira;
 
     @Column
-    private String changedBy;
+    private UUID changedBy;
 
     @Column
     private LocalDateTime changedAt;
@@ -40,12 +40,6 @@ public class CardHistory {
     @Column
     private LocalDateTime cratedAt;
 
-    @Column
+    @Column(nullable = false)
     private UUID createdBy;
-
-    @Column(length = 255)
-    private String updatedBy;
-
-    @Column
-    private LocalDateTime updatedAt;
 }

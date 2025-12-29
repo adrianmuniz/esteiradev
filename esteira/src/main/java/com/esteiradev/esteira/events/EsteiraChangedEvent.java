@@ -8,5 +8,5 @@ public record EsteiraChangedEvent(
         UUID cardId,
         EsteiraType oldEsteira,
         EsteiraType newEsteira,
-        String changedBy
+        UUID changedBy
 ) { }
