@@ -1,21 +1,30 @@
 package com.esteiradev.esteira.services.impl;
 
+import com.esteiradev.esteira.dto.CardDto;
+import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.events.EsteiraChangedEvent;
+import com.esteiradev.esteira.exceptions.NotFoundException;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
+import com.esteiradev.esteira.model.SprintModel;
 import com.esteiradev.esteira.repositories.CardHistoryRepository;
 import com.esteiradev.esteira.repositories.CardRepository;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
+import com.esteiradev.esteira.services.SprintService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,6 +40,12 @@ public class CardServiceImpl implements CardService {
     CardRepository cardRepository;
 
     @Autowired
+    SprintService  sprintService;
+
+    @Autowired
+    AcessValidationService acessValidationService;
+
+    @Autowired
     CardHistoryRepository  cardHistoryRepository;
 
     @Autowired
@@ -38,8 +53,49 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public CardModel save(CardModel cardModel) {
-        return cardRepository.save(cardModel);
+    public CardModel save(UUID esteiraId, CardDto dto) {
+        var esteiraModel = esteiraService.findById(esteiraId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
+
+        Optional<SprintModel> sprintModel = sprintService.findBySprintId(dto.getSprintId());
+        var cardModel = new CardModel();
+        if(dto.getSprintId() != null){
+            cardModel.setSprint(sprintModel.get());
+        }
+        cardModel.setEsteiraModel(esteiraModel);
+        cardModel.setStatus(StatusCard.TODO);
+        cardModel.setPosition(0);
+        cardModel.setDateCreate(LocalDateTime.now());
+        cardModel.setHoursUsed(0);
+        cardModel.setHoursRemainning(dto.getEstimateHours());
+        BeanUtils.copyProperties(dto, cardModel);
+        cardRepository.save(cardModel);
+        return cardModel;
+    }
+
+    @Override
+    public CardModel updateCard(UUID cardId, CardUpdateDto dto, Authentication authentication) {
+        CardModel card = cardRepository.findById(cardId).orElseThrow(() -> new NotFoundException("Card não encontrado"));
+        acessValidationService.validateSameUser(card.getUserId(), authentication);
+        if(dto.getTitle() != null){
+            card.setTitle(dto.getTitle());
+        }
+        if(dto.getDescription() != null){
+            card.setDescription(dto.getDescription());
+        }
+        if(dto.getPosition() != null){
+            card.setPosition(dto.getPosition());
+        }
+        if(dto.getEstimateHours() != null){
+            card.setEstimateHours(dto.getEstimateHours());
+        }
+        if(dto.getSprintId() != null){
+            SprintModel sprint = sprintService.findBySprintId(dto.getSprintId()).orElseThrow(() -> new NotFoundException("Sprint não encontrada"));
+            card.setSprint(sprint);
+        }
+        card.setDateUpdated(LocalDateTime.now());
+        cardRepository.save(card);
+        return card;
     }
 
     @Override
@@ -85,7 +141,7 @@ public class CardServiceImpl implements CardService {
 
         var card = cardOpt.get();
         card.setEsteiraModel(esteiraOpt.get());
-        save(card);
+        cardRepository.save(card);
         eventPublisher.publishEvent(new EsteiraChangedEvent(
                         cardId,
                         atual,

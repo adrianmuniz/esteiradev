@@ -1,16 +1,18 @@
 package com.esteiradev.esteira.services;
 
+import com.esteiradev.esteira.dto.CardDto;
+import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.model.CardModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CardService {
 
-    CardModel save(CardModel cardModel);
 
     Page<CardModel> findAll(Pageable pageable);
 
@@ -21,4 +23,8 @@ public interface CardService {
     boolean findBySprintId(UUID sprintId);
 
     void moveCard(UUID cardId, MoveCardDto dto);
+
+    CardModel save(UUID esteiraId, CardDto dto);
+
+    CardModel updateCard(UUID cardId, CardUpdateDto dto, Authentication authentication);
 }
