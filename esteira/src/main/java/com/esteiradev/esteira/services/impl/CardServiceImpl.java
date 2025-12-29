@@ -75,8 +75,8 @@ public class CardServiceImpl implements CardService {
 
         eventPublisher.publishEvent(new CardCreatedEvent(
                 cardModel.getId(),
-                cardModel.getTitle(),
-                cardModel.getUserId()
+                cardModel.getUserId(),
+                cardModel.getDateCreate()
         ));
         return cardModel;
     }
@@ -107,6 +107,7 @@ public class CardServiceImpl implements CardService {
 
         eventPublisher.publishEvent(new UpdatedCardEvent(
                 cardId,
+                card.getDateCreate(),
                 card.getUserId()
         ));
         return card;
@@ -158,9 +159,10 @@ public class CardServiceImpl implements CardService {
         cardRepository.save(card);
         eventPublisher.publishEvent(new EsteiraChangedEvent(
                         cardId,
+                        card.getUserId(),
                         atual,
                         card.getEsteiraModel().getType(),
-                        card.getUserId()
+                        card.getDateCreate()
                 ));
     }
 

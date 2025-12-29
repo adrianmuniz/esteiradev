@@ -61,6 +61,7 @@ public class CardHistoryListener {
                 .changedBy(event.changedBy())
                 .createdBy(event.changedBy())
                 .changedAt(LocalDateTime.now())
+                .cratedAt(event.createdAt())
                 .build();
 
         cardHistoryRepository.save(cardHistory);
