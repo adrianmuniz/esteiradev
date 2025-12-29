@@ -5,5 +5,5 @@ import java.util.UUID;
 public record CardCreatedEvent(
         UUID cardId,
         String title,
-        String createdBy
+        UUID createdBy
 ) {}

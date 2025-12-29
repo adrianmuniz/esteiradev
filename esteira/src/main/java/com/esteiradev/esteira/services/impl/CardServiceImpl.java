@@ -5,6 +5,7 @@ import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
+import com.esteiradev.esteira.events.CardCreatedEvent;
 import com.esteiradev.esteira.events.EsteiraChangedEvent;
 import com.esteiradev.esteira.exceptions.NotFoundException;
 import com.esteiradev.esteira.model.CardModel;
@@ -70,9 +71,16 @@ public class CardServiceImpl implements CardService {
         cardModel.setHoursRemainning(dto.getEstimateHours());
         BeanUtils.copyProperties(dto, cardModel);
         cardRepository.save(cardModel);
+
+        eventPublisher.publishEvent(new CardCreatedEvent(
+                cardModel.getId(),
+                cardModel.getTitle(),
+                cardModel.getUserId()
+        ));
         return cardModel;
     }
 
+    @Transactional
     @Override
     public CardModel updateCard(UUID cardId, CardUpdateDto dto, Authentication authentication) {
         CardModel card = cardRepository.findById(cardId).orElseThrow(() -> new NotFoundException("Card não encontrado"));

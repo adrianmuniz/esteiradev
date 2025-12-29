@@ -1,6 +1,7 @@
 package com.esteiradev.esteira.listener;
 
 import com.esteiradev.esteira.enums.HistoryType;
+import com.esteiradev.esteira.events.CardCreatedEvent;
 import com.esteiradev.esteira.events.EsteiraChangedEvent;
 import com.esteiradev.esteira.model.CardHistory;
 import com.esteiradev.esteira.repositories.CardHistoryRepository;
@@ -34,6 +35,19 @@ public class CardHistoryListener {
                 .newValue(event.newEsteira().name())
                 .changedBy(event.changedBy())
                 .changedAt(LocalDateTime.now())
+                .build();
+
+        cardHistoryRepository.save(cardHistory);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handle(CardCreatedEvent event) {
+        CardHistory cardHistory = CardHistory.builder()
+                .cardId(event.cardId())
+                .type(HistoryType.CARD_CREATED)
+                .cratedAt(LocalDateTime.now())
+                .createdBy(event.createdBy())
                 .build();
 
         cardHistoryRepository.save(cardHistory);

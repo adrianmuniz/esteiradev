@@ -36,4 +36,16 @@ public class CardHistory {
 
     @Column
     private LocalDateTime changedAt;
+
+    @Column
+    private LocalDateTime cratedAt;
+
+    @Column
+    private UUID createdBy;
+
+    @Column(length = 255)
+    private String updatedBy;
+
+    @Column
+    private LocalDateTime updatedAt;
 }
