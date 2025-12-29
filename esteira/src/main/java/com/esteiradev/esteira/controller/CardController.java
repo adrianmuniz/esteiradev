@@ -4,8 +4,10 @@ import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.enums.StatusCard;
+import com.esteiradev.esteira.model.CardHistory;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.SprintModel;
+import com.esteiradev.esteira.services.CardHistoryService;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.services.SprintService;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,6 +40,9 @@ public class CardController {
 
     @Autowired
     CardService cardService;
+
+    @Autowired
+    CardHistoryService cardHistoryService;
 
     @Autowired
     AcessValidationService acessValidationService;
@@ -93,5 +99,11 @@ public class CardController {
     public ResponseEntity<Object> moveCard(@PathVariable(value = "id") UUID cardId, @RequestBody MoveCardDto dto){
         cardService.moveCard(cardId, dto);
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/{cardId}/history")
+    public ResponseEntity<List<CardHistory>> history(@PathVariable UUID cardId) {
+        return ResponseEntity.ok(cardHistoryService.getHistory(cardId));
     }
 }

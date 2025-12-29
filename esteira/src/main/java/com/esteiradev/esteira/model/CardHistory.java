@@ -5,11 +5,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "TB_CARD_HISTORY")
+@Table(name = "CARD_HISTORY")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
 public class CardHistory {
 
@@ -23,23 +27,19 @@ public class CardHistory {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private HistoryType typeHistory;
-
-    @Column(length = 255)
-    private String oldEsteira;
-
-    @Column(length = 255)
-    private String newEsteira;
-
-    @Column
-    private UUID changedBy;
-
-    @Column
-    private LocalDateTime changedAt;
-
-    @Column
-    private LocalDateTime cratedAt;
+    private HistoryType type;
 
     @Column(nullable = false)
-    private UUID createdBy;
+    private UUID actorId;
+
+    @Column(nullable = false)
+    private LocalDateTime occurredAt;
+
+    @OneToMany(
+            mappedBy = "history",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<CardHistoryChange> changes = new ArrayList<>();
 }

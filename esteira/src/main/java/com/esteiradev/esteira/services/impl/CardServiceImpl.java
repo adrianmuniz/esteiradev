@@ -6,9 +6,10 @@ import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.events.CardCreatedEvent;
-import com.esteiradev.esteira.events.EsteiraChangedEvent;
-import com.esteiradev.esteira.events.UpdatedCardEvent;
+import com.esteiradev.esteira.events.CardMovedEvent;
+import com.esteiradev.esteira.events.CardUpdatedEvent;
 import com.esteiradev.esteira.exceptions.NotFoundException;
+import com.esteiradev.esteira.model.CardHistoryChange;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -73,11 +76,7 @@ public class CardServiceImpl implements CardService {
         BeanUtils.copyProperties(dto, cardModel);
         cardRepository.save(cardModel);
 
-        eventPublisher.publishEvent(new CardCreatedEvent(
-                cardModel.getId(),
-                cardModel.getUserId(),
-                cardModel.getDateCreate()
-        ));
+        eventPublisher.publishEvent(new CardCreatedEvent(cardModel.getId(), cardModel.getUserId()));
         return cardModel;
     }
 
@@ -86,30 +85,40 @@ public class CardServiceImpl implements CardService {
     public CardModel updateCard(UUID cardId, CardUpdateDto dto, Authentication authentication) {
         CardModel card = cardRepository.findById(cardId).orElseThrow(() -> new NotFoundException("Card não encontrado"));
         acessValidationService.validateSameUser(card.getUserId(), authentication);
+        List<CardHistoryChange> changes = new ArrayList<>();
+
         if(dto.getTitle() != null){
+            changes.add(change("title", card.getTitle(), dto.getTitle()));
             card.setTitle(dto.getTitle());
         }
         if(dto.getDescription() != null){
+            changes.add(change("description", card.getDescription(), dto.getDescription()));
             card.setDescription(dto.getDescription());
         }
         if(dto.getPosition() != null){
+            changes.add(change("position", card.getPosition(), dto.getPosition()));
             card.setPosition(dto.getPosition());
         }
         if(dto.getEstimateHours() != null){
+            changes.add(change("estimateHours",
+                    String.valueOf(card.getEstimateHours()),
+                    String.valueOf(dto.getEstimateHours())));
             card.setEstimateHours(dto.getEstimateHours());
         }
         if(dto.getSprintId() != null){
             SprintModel sprint = sprintService.findBySprintId(dto.getSprintId()).orElseThrow(() -> new NotFoundException("Sprint não encontrada"));
+            changes.add(change("sprint", card.getSprint().getSprintId(), dto.getSprintId()));
             card.setSprint(sprint);
         }
         card.setDateUpdated(LocalDateTime.now());
         cardRepository.save(card);
 
-        eventPublisher.publishEvent(new UpdatedCardEvent(
-                cardId,
-                card.getDateCreate(),
-                card.getUserId()
-        ));
+        if (!changes.isEmpty()) {
+            eventPublisher.publishEvent(
+                    new CardUpdatedEvent(cardId, card.getUserId(), changes)
+            );
+        }
+
         return card;
     }
 
@@ -157,13 +166,7 @@ public class CardServiceImpl implements CardService {
         var card = cardOpt.get();
         card.setEsteiraModel(esteiraOpt.get());
         cardRepository.save(card);
-        eventPublisher.publishEvent(new EsteiraChangedEvent(
-                        cardId,
-                        card.getUserId(),
-                        atual,
-                        card.getEsteiraModel().getType(),
-                        card.getDateCreate()
-                ));
+        eventPublisher.publishEvent(new CardMovedEvent(card.getId(), card.getUserId(), atual.toString(), esteiraOpt.get().getType().toString()));
     }
 
     @Transactional
@@ -177,5 +180,13 @@ public class CardServiceImpl implements CardService {
     public void closeCard(CardModel cardModel){
         cardModel.setStatus(StatusCard.FECHADO);
         cardModel.setDateResolved(LocalDateTime.now());
+    }
+
+    private CardHistoryChange change(String field, Object oldV, Object newV) {
+        return CardHistoryChange.builder()
+                .fieldName(field)
+                .oldValue(oldV == null ? null : oldV.toString())
+                .newValue(newV == null ? null : newV.toString())
+                .build();
     }
 }

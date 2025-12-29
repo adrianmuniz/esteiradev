@@ -2,9 +2,10 @@ package com.esteiradev.esteira.listener;
 
 import com.esteiradev.esteira.enums.HistoryType;
 import com.esteiradev.esteira.events.CardCreatedEvent;
-import com.esteiradev.esteira.events.EsteiraChangedEvent;
-import com.esteiradev.esteira.events.UpdatedCardEvent;
+import com.esteiradev.esteira.events.CardMovedEvent;
+import com.esteiradev.esteira.events.CardUpdatedEvent;
 import com.esteiradev.esteira.model.CardHistory;
+import com.esteiradev.esteira.model.CardHistoryChange;
 import com.esteiradev.esteira.repositories.CardHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,49 +22,61 @@ import java.time.LocalDateTime;
 public class CardHistoryListener {
 
     @Autowired
-    CardHistoryRepository cardHistoryRepository;
+    CardHistoryRepository repository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handle(EsteiraChangedEvent event) {
-        CardHistory cardHistory = CardHistory.builder()
+    public void onCardCreated(CardCreatedEvent event) {
+
+        CardHistory history = CardHistory.builder()
                 .cardId(event.cardId())
-                .typeHistory(HistoryType.CARD_MOVED)
-                .oldEsteira(event.oldEsteira().name())
-                .newEsteira(event.newEsteira().name())
-                .changedBy(event.changedBy())
-                .changedAt(LocalDateTime.now())
-                .createdBy(event.changedBy())
+                .type(HistoryType.CREATED)
+                .actorId(event.actorId())
+                .occurredAt(LocalDateTime.now())
                 .build();
 
-        cardHistoryRepository.save(cardHistory);
+        repository.save(history);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handle(CardCreatedEvent event) {
-        CardHistory cardHistory = CardHistory.builder()
+    public void onCardMoved(CardMovedEvent event) {
+
+        CardHistory history = CardHistory.builder()
                 .cardId(event.cardId())
-                .typeHistory(HistoryType.CARD_CREATED)
-                .cratedAt(LocalDateTime.now())
-                .createdBy(event.createdBy())
+                .type(HistoryType.STATUS_CHANGED)
+                .actorId(event.actorId())
+                .occurredAt(LocalDateTime.now())
                 .build();
 
-        cardHistoryRepository.save(cardHistory);
+        history.getChanges().add(
+                CardHistoryChange.builder()
+                        .history(history)
+                        .fieldName("esteira")
+                        .oldValue(event.oldEsteira())
+                        .newValue(event.newEsteira())
+                        .build()
+        );
+
+        repository.save(history);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handle(UpdatedCardEvent event) {
-        CardHistory cardHistory = CardHistory.builder()
+    public void onCardUpdated(CardUpdatedEvent event) {
+
+        CardHistory history = CardHistory.builder()
                 .cardId(event.cardId())
-                .typeHistory(HistoryType.CARD_UPDATED)
-                .changedBy(event.changedBy())
-                .createdBy(event.changedBy())
-                .changedAt(LocalDateTime.now())
-                .cratedAt(event.createdAt())
+                .type(HistoryType.UPDATED)
+                .actorId(event.actorId())
+                .occurredAt(LocalDateTime.now())
                 .build();
 
-        cardHistoryRepository.save(cardHistory);
+        event.changes().forEach(change -> {
+            change.setHistory(history);
+            history.getChanges().add(change);
+        });
+
+        repository.save(history);
     }
 }
