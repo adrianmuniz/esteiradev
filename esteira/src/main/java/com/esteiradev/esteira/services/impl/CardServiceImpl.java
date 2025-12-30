@@ -3,6 +3,7 @@ package com.esteiradev.esteira.services.impl;
 import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
+import com.esteiradev.esteira.enums.CardField;
 import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.events.CardCreatedEvent;
@@ -88,26 +89,26 @@ public class CardServiceImpl implements CardService {
         List<CardHistoryChange> changes = new ArrayList<>();
 
         if(dto.getTitle() != null){
-            changes.add(change("title", card.getTitle(), dto.getTitle()));
+            changes.add(change(CardField.TITLE.name(), card.getTitle(), dto.getTitle()));
             card.setTitle(dto.getTitle());
         }
         if(dto.getDescription() != null){
-            changes.add(change("description", card.getDescription(), dto.getDescription()));
+            changes.add(change(CardField.DESCRIPTION.name(), card.getDescription(), dto.getDescription()));
             card.setDescription(dto.getDescription());
         }
         if(dto.getPosition() != null){
-            changes.add(change("position", card.getPosition(), dto.getPosition()));
+            changes.add(change(CardField.POSITION.name(), card.getPosition(), dto.getPosition()));
             card.setPosition(dto.getPosition());
         }
         if(dto.getEstimateHours() != null){
-            changes.add(change("estimateHours",
+            changes.add(change(CardField.ESTIMATE_HOURS.name(),
                     String.valueOf(card.getEstimateHours()),
                     String.valueOf(dto.getEstimateHours())));
             card.setEstimateHours(dto.getEstimateHours());
         }
         if(dto.getSprintId() != null){
             SprintModel sprint = sprintService.findBySprintId(dto.getSprintId()).orElseThrow(() -> new NotFoundException("Sprint não encontrada"));
-            changes.add(change("sprint", card.getSprint().getSprintId(), dto.getSprintId()));
+            changes.add(change(CardField.SPRINT.name(), card.getSprint().getSprintId(), dto.getSprintId()));
             card.setSprint(sprint);
         }
         card.setDateUpdated(LocalDateTime.now());

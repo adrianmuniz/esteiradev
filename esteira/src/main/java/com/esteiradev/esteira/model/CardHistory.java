@@ -42,4 +42,7 @@ public class CardHistory {
     )
     @Builder.Default
     private List<CardHistoryChange> changes = new ArrayList<>();
+
+    @Transient
+    private String message;
 }
