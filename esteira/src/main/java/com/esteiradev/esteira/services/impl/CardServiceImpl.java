@@ -10,7 +10,7 @@ import com.esteiradev.esteira.events.CardCreatedEvent;
 import com.esteiradev.esteira.events.CardMovedEvent;
 import com.esteiradev.esteira.events.CardUpdatedEvent;
 import com.esteiradev.esteira.exceptions.NotFoundException;
-import com.esteiradev.esteira.model.CardHistoryChange;
+import com.esteiradev.esteira.model.history.CardHistoryChange;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;

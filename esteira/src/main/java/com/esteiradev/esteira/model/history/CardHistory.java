@@ -1,4 +1,4 @@
-package com.esteiradev.esteira.model;
+package com.esteiradev.esteira.model.history;
 
 import com.esteiradev.esteira.enums.HistoryType;
 import jakarta.persistence.*;

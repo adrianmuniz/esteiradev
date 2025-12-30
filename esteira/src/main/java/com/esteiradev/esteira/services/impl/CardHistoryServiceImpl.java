@@ -1,6 +1,6 @@
 package com.esteiradev.esteira.services.impl;
 
-import com.esteiradev.esteira.model.CardHistory;
+import com.esteiradev.esteira.model.history.CardHistory;
 import com.esteiradev.esteira.repositories.CardHistoryRepository;
 import com.esteiradev.esteira.services.CardHistoryService;
 import com.esteiradev.esteira.utils.CardHistoryMessageBuilder;

@@ -2,8 +2,8 @@ package com.esteiradev.esteira.utils;
 
 import com.esteiradev.esteira.enums.CardField;
 import com.esteiradev.esteira.enums.HistoryType;
-import com.esteiradev.esteira.model.CardHistory;
-import com.esteiradev.esteira.model.CardHistoryChange;
+import com.esteiradev.esteira.model.history.CardHistory;
+import com.esteiradev.esteira.model.history.CardHistoryChange;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

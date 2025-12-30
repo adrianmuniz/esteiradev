@@ -1,6 +1,6 @@
 package com.esteiradev.esteira.repositories;
 
-import com.esteiradev.esteira.model.CardHistory;
+import com.esteiradev.esteira.model.history.CardHistory;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
