@@ -116,7 +116,7 @@ public class CardServiceImpl implements CardService {
 
         if (!changes.isEmpty()) {
             eventPublisher.publishEvent(
-                    new CardUpdatedEvent(cardId, card.getUserId(), changes)
+                    new CardUpdatedEvent(cardId, card.getUserId(), changes, LocalDateTime.now())
             );
         }
 
@@ -163,11 +163,10 @@ public class CardServiceImpl implements CardService {
         } else if(atual.getOrdem() == 5 && nova != 5){
             reopenCard(cardOpt.get(), nova);
         }
-
         var card = cardOpt.get();
+        eventPublisher.publishEvent(new CardMovedEvent(card.getId(), card.getUserId(), cardOpt.get().getEsteiraModel().getTitulo(), esteiraOpt.get().getTitulo()));
         card.setEsteiraModel(esteiraOpt.get());
         cardRepository.save(card);
-        eventPublisher.publishEvent(new CardMovedEvent(card.getId(), card.getUserId(), atual.toString(), esteiraOpt.get().getType().toString()));
     }
 
     @Transactional

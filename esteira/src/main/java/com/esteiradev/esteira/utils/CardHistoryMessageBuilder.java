@@ -8,6 +8,7 @@ import com.esteiradev.esteira.model.history.CardHistoryChange;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CardHistoryMessageBuilder {
 
@@ -28,24 +29,30 @@ public class CardHistoryMessageBuilder {
         }
 
         if(history.getType() == HistoryType.UPDATED){
-            return buildUpdateMessage(history.getChanges());
+            return buildUpdateMessage(history);
         }
 
         return "";
     }
 
-    private static String buildUpdateMessage(List<CardHistoryChange> changes) {
+    private static String buildUpdateMessage(CardHistory history) {
+        List<CardHistoryChange> changes = history.getChanges();
         if(changes.size() == 1){
-            CardHistoryChange change = changes.get(0);
+            CardHistoryChange c = changes.get(0);
             return String.format(
-                    "%s alterado",
-                    CardField.from(change.getFieldName()).getLabel()
+                    format(history.getOccurredAt()) + " - %s alterado de %s para %s",
+                    CardField.fromFieldName(c.getFieldName()),
+                    c.getOldValue(),
+                    c.getNewValue()
             );
         }
-        return String.format(
-                "%d campos alterados",
-                changes.size()
-        );
+
+        String camposAlterados = changes.stream()
+                .map(c -> CardField.fromFieldName(c.getFieldName()))
+                .distinct()
+                .collect(Collectors.joining(", "));
+
+        return format(history.getOccurredAt()) + " - Card atualizado: " + camposAlterados;
     }
 
     private static String format(LocalDateTime dateTime) {

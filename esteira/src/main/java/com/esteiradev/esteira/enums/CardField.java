@@ -1,9 +1,11 @@
 package com.esteiradev.esteira.enums;
 
+import java.util.Arrays;
+
 public enum CardField {
     TITLE("Título"),
     DESCRIPTION("Descrição"),
-    ESTIMATE_HOURS("Estimativa (horas)"),
+    ESTIMATE_HOURS("Estimativa"),
     SPRINT("Sprint"),
     POSITION("Posição"),
     ESTEIRA("Esteira");
@@ -18,7 +20,11 @@ public enum CardField {
         return label;
     }
 
-    public static CardField from(String fieldName) {
-        return CardField.valueOf(fieldName.toUpperCase());
+    public static String fromFieldName(String fieldName) {
+        return Arrays.stream(values())
+                .filter(f -> f.name().equalsIgnoreCase(fieldName))
+                .map(CardField::getLabel)
+                .findFirst()
+                .orElse(fieldName);
     }
 }

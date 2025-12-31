@@ -2,11 +2,13 @@ package com.esteiradev.esteira.events;
 
 import com.esteiradev.esteira.model.history.CardHistoryChange;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.List;
 
 public record CardUpdatedEvent(
         UUID cardId,
         UUID actorId,
-        List<CardHistoryChange> changes
+        List<CardHistoryChange> changes,
+        LocalDateTime occurredAt
 ) { }
