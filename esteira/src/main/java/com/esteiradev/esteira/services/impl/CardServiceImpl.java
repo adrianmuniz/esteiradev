@@ -164,9 +164,11 @@ public class CardServiceImpl implements CardService {
             reopenCard(cardOpt.get(), nova);
         }
         var card = cardOpt.get();
-        eventPublisher.publishEvent(new CardMovedEvent(card.getId(), card.getUserId(), cardOpt.get().getEsteiraModel().getTitulo(), esteiraOpt.get().getTitulo()));
+        String esteiraAtual = card.getEsteiraModel().getTitulo();
+        String novaEsteira = esteiraOpt.get().getTitulo();
         card.setEsteiraModel(esteiraOpt.get());
         cardRepository.save(card);
+        eventPublisher.publishEvent(new CardMovedEvent(card.getId(), card.getUserId(), esteiraAtual, novaEsteira));
     }
 
     @Transactional
