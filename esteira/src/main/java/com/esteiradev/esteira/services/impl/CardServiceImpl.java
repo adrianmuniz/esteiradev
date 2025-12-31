@@ -14,7 +14,6 @@ import com.esteiradev.esteira.model.history.CardHistoryChange;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;
-import com.esteiradev.esteira.repositories.CardHistoryRepository;
 import com.esteiradev.esteira.repositories.CardRepository;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
@@ -52,14 +51,11 @@ public class CardServiceImpl implements CardService {
     AcessValidationService acessValidationService;
 
     @Autowired
-    CardHistoryRepository  cardHistoryRepository;
-
-    @Autowired
     ApplicationEventPublisher eventPublisher;
 
     @Transactional
     @Override
-    public CardModel save(UUID esteiraId, CardDto dto) {
+    public CardModel create(UUID esteiraId, CardDto dto) {
         var esteiraModel = esteiraService.findById(esteiraId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
 
@@ -83,7 +79,7 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public CardModel updateCard(UUID cardId, CardUpdateDto dto, Authentication authentication) {
+    public CardModel update(UUID cardId, CardUpdateDto dto, Authentication authentication) {
         CardModel card = cardRepository.findById(cardId).orElseThrow(() -> new NotFoundException("Card não encontrado"));
         acessValidationService.validateSameUser(card.getUserId(), authentication);
         List<CardHistoryChange> changes = new ArrayList<>();
@@ -121,27 +117,6 @@ public class CardServiceImpl implements CardService {
         }
 
         return card;
-    }
-
-    @Override
-    public Page<CardModel> findAll(Pageable pageable) {
-        return cardRepository.findAll(pageable);
-    }
-
-    @Override
-    public Optional<CardModel> findById(UUID id) {
-        return cardRepository.findById(id);
-    }
-
-    @Transactional
-    @Override
-    public void delete(CardModel cardModel) {
-        cardRepository.delete(cardModel);
-    }
-
-    @Override
-    public boolean findBySprintId(UUID sprintId) {
-        return cardRepository.existsBySprint_SprintId(sprintId);
     }
 
     @Transactional
@@ -190,5 +165,26 @@ public class CardServiceImpl implements CardService {
                 .oldValue(oldV == null ? null : oldV.toString())
                 .newValue(newV == null ? null : newV.toString())
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void delete(CardModel cardModel) {
+        cardRepository.delete(cardModel);
+    }
+
+    @Override
+    public Page<CardModel> findAll(Pageable pageable) {
+        return cardRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<CardModel> findById(UUID id) {
+        return cardRepository.findById(id);
+    }
+
+    @Override
+    public boolean findBySprintId(UUID sprintId) {
+        return cardRepository.existsBySprint_SprintId(sprintId);
     }
 }

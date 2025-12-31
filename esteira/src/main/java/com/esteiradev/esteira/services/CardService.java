@@ -24,7 +24,7 @@ public interface CardService {
 
     void moveCard(UUID cardId, MoveCardDto dto);
 
-    CardModel save(UUID esteiraId, CardDto dto);
+    CardModel create(UUID esteiraId, CardDto dto);
 
-    CardModel updateCard(UUID cardId, CardUpdateDto dto, Authentication authentication);
+    CardModel update(UUID cardId, CardUpdateDto dto, Authentication authentication);
 }

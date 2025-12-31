@@ -44,7 +44,7 @@ public class CardController {
     @PostMapping("/{esteiraId}/create")
     public ResponseEntity<Object> create(@PathVariable UUID esteiraId,
                                              @Validated @RequestBody CardDto dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(cardService.save(esteiraId, dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(cardService.create(esteiraId, dto));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -83,7 +83,7 @@ public class CardController {
     @PatchMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable(value = "id") UUID cardId, @Validated @RequestBody CardUpdateDto dto, Authentication authentication){
 
-        CardModel card = cardService.updateCard(cardId, dto, authentication);
+        CardModel card = cardService.update(cardId, dto, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(card);
     }
 
