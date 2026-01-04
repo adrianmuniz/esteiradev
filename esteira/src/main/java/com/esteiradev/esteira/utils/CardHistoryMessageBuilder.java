@@ -21,17 +21,22 @@ public class CardHistoryMessageBuilder {
         }
         else if(history.getType() == HistoryType.STATUS_CHANGED){
             CardHistoryChange  c = history.getChanges().get(0);
+            if(c.getOldValue().equals("CLOSED")){
+                return String.format(
+                        format(history.getOccurredAt()) + " - Card reaberto",
+                        c.getOldValue(),
+                        c.getNewValue()
+                );
+            }
             return String.format(
                     format(history.getOccurredAt()) + " - Card movido de %s para %s",
                     c.getOldValue(),
                     c.getNewValue()
             );
         }
-
         if(history.getType() == HistoryType.UPDATED){
             return buildUpdateMessage(history);
         }
-
         return "";
     }
 
