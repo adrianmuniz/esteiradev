@@ -28,6 +28,13 @@ public class CardHistoryMessageBuilder {
                         c.getNewValue()
                 );
             }
+            if(c.getNewValue().equals("CLOSED")){
+                return String.format(
+                        format(history.getOccurredAt()) + " - Card fechado",
+                        c.getOldValue(),
+                        c.getNewValue()
+                );
+            }
             return String.format(
                     format(history.getOccurredAt()) + " - Card movido de %s para %s",
                     c.getOldValue(),
