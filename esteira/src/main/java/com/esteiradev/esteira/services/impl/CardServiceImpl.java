@@ -14,6 +14,8 @@ import com.esteiradev.esteira.model.history.CardHistoryChange;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.model.SprintModel;
+import com.esteiradev.esteira.repositories.CardHistoryChangeRepository;
+import com.esteiradev.esteira.repositories.CardHistoryRepository;
 import com.esteiradev.esteira.repositories.CardRepository;
 import com.esteiradev.esteira.services.CardService;
 import com.esteiradev.esteira.services.EsteiraService;
@@ -43,6 +45,12 @@ public class CardServiceImpl implements CardService {
 
     @Autowired
     CardRepository cardRepository;
+
+    @Autowired
+    CardHistoryRepository cardHistoryRepository;
+
+    @Autowired
+    CardHistoryChangeRepository cardHistoryChangeRepository;
 
     @Autowired
     SprintService  sprintService;
@@ -170,6 +178,8 @@ public class CardServiceImpl implements CardService {
     @Transactional
     @Override
     public void delete(CardModel cardModel) {
+        cardHistoryChangeRepository.deleteByCardId(cardModel.getId());
+        cardHistoryRepository.deleteByCardId(cardModel.getId());
         cardRepository.delete(cardModel);
     }
 
