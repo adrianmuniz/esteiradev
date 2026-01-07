@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.model;
 
+import com.esteiradev.esteira.enums.PriorityEnum;
 import com.esteiradev.esteira.enums.StatusCard;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -52,4 +53,6 @@ public class CardModel {
     @ManyToOne(optional = true ,fetch = FetchType.LAZY)
     @JoinColumn(name = "sprint_id")
     private SprintModel sprint;
+
+    private PriorityEnum priority;
 }

@@ -8,7 +8,8 @@ public enum CardField {
     ESTIMATE_HOURS("Estimativa"),
     SPRINT("Sprint"),
     POSITION("Posição"),
-    ESTEIRA("Esteira");
+    ESTEIRA("Esteira"),
+    PRIORITY("Prioridade");
 
     private final String label;
 

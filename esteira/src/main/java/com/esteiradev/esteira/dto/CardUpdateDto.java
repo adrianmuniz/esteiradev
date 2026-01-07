@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.dto;
 
+import com.esteiradev.esteira.enums.PriorityEnum;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -19,4 +20,6 @@ public class CardUpdateDto {
     private Integer estimateHours;
 
     private UUID sprintId;
+
+    private PriorityEnum priority;
 }

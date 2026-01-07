@@ -5,6 +5,7 @@ import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.enums.CardField;
 import com.esteiradev.esteira.enums.EsteiraType;
+import com.esteiradev.esteira.enums.PriorityEnum;
 import com.esteiradev.esteira.enums.StatusCard;
 import com.esteiradev.esteira.events.CardCreatedEvent;
 import com.esteiradev.esteira.events.CardMovedEvent;
@@ -74,6 +75,7 @@ public class CardServiceImpl implements CardService {
         }
         cardModel.setEsteiraModel(esteiraModel);
         cardModel.setStatus(StatusCard.TODO);
+        cardModel.setPriority(PriorityEnum.LOW);
         cardModel.setPosition(0);
         cardModel.setDateCreate(LocalDateTime.now());
         cardModel.setHoursUsed(0);
@@ -92,6 +94,10 @@ public class CardServiceImpl implements CardService {
         acessValidationService.validateSameUser(card.getUserId(), authentication);
         List<CardHistoryChange> changes = new ArrayList<>();
 
+        if(dto.getPriority() != null){
+            changes.add(change(CardField.PRIORITY.name(), card.getPriority(), dto.getPriority()));
+            card.setPriority(dto.getPriority());
+        }
         if(dto.getTitle() != null){
             changes.add(change(CardField.TITLE.name(), card.getTitle(), dto.getTitle()));
             card.setTitle(dto.getTitle());

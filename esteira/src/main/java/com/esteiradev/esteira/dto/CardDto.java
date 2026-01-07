@@ -1,5 +1,6 @@
 package com.esteiradev.esteira.dto;
 
+import com.esteiradev.esteira.enums.PriorityEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,9 +18,11 @@ public class CardDto {
     @Size(min = 5, message = "Descrição deve ter no mínimo 5 caracteres", max = 255)
     String description;
 
+    @NotNull(message = "Informe a Estimativa")
     private Integer estimateHours;
 
     private UUID sprintId;
 
+    @NotNull(message = "Usuário não informado")
     private UUID userId;
 }
