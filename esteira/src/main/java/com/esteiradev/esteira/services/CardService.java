@@ -14,9 +14,9 @@ import java.util.UUID;
 public interface CardService {
 
 
-    Page<CardModel> findAll(Pageable pageable);
+    Page<CardModel> getAll(Pageable pageable);
 
-    Optional<CardModel> findById(UUID id);
+    Optional<CardModel> get(UUID id);
 
     void delete(CardModel cardModel);
 

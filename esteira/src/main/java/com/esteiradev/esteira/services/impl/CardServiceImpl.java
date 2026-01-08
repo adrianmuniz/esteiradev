@@ -136,7 +136,7 @@ public class CardServiceImpl implements CardService {
     @Transactional
     @Override
     public void moveCard(UUID cardId, MoveCardDto dto) {
-        Optional<CardModel> cardOpt = findById(cardId);
+        Optional<CardModel> cardOpt = get(cardId);
         Optional<EsteiraModel> esteiraOpt = esteiraService.findById(dto.getEsteiraId());
         if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
             throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
@@ -190,12 +190,12 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Page<CardModel> findAll(Pageable pageable) {
+    public Page<CardModel> getAll(Pageable pageable) {
         return cardRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<CardModel> findById(UUID id) {
+    public Optional<CardModel> get(UUID id) {
         return cardRepository.findById(id);
     }
 

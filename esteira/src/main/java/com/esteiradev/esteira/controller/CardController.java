@@ -51,14 +51,14 @@ public class CardController {
     @GetMapping
     public ResponseEntity<Page<CardModel>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         Page<CardModel> cardModelPage = null;
-        cardModelPage = cardService.findAll(pageable);
+        cardModelPage = cardService.getAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(cardModelPage);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> get(@PathVariable(value = "id") UUID cardId, Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findById(cardId);
+        Optional<CardModel> optionalCardModel = cardService.get(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         } else {
@@ -70,7 +70,7 @@ public class CardController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID cardId,Authentication authentication){
-        Optional<CardModel> optionalCardModel = cardService.findById(cardId);
+        Optional<CardModel> optionalCardModel = cardService.get(cardId);
         if (!optionalCardModel.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Card não Encontrado");
         }
