@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpecificationExecutor<CardModel> {
 
     @EntityGraph(attributePaths = {"esteiraModel", "sprint"})
-    Page<CardModel> findAll(Pageable pageable);
+    Page<CardModel> findAllByOrderByPriorityAsc(Pageable pageable);
 
     @EntityGraph(attributePaths = {"esteiraModel", "sprint"})
     Optional<CardModel> findById(UUID id);

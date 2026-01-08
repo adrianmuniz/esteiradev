@@ -191,7 +191,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Page<CardModel> getAll(Pageable pageable) {
-        return cardRepository.findAll(pageable);
+        return cardRepository.findAllByOrderByPriorityAsc(pageable);
     }
 
     @Override
