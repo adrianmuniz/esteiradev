@@ -49,7 +49,7 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<CardModel>> getAll(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<Page<CardModel>> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable){
         Page<CardModel> cardModelPage = null;
         cardModelPage = cardService.getAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(cardModelPage);
