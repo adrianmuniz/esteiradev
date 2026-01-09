@@ -19,4 +19,6 @@ public interface EsteiraService {
     Page<EsteiraModel> findAll(Pageable pageable);
 
     List<EsteiraModel> findAllByUserId(UUID userId);
+
+    List<EsteiraModel> findBoardByUserId(UUID userId);
 }

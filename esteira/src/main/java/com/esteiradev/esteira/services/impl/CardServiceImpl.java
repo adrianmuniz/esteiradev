@@ -3,6 +3,7 @@ package com.esteiradev.esteira.services.impl;
 import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
+import com.esteiradev.esteira.dto.response.CardResponse;
 import com.esteiradev.esteira.enums.CardField;
 import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.enums.PriorityEnum;
@@ -64,7 +65,7 @@ public class CardServiceImpl implements CardService {
 
     @Transactional
     @Override
-    public CardModel create(UUID esteiraId, CardDto dto) {
+    public CardResponse create(UUID esteiraId, CardDto dto) {
         var esteiraModel = esteiraService.findById(esteiraId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Esteira não encontrada"));
 
@@ -73,7 +74,7 @@ public class CardServiceImpl implements CardService {
         if(dto.getSprintId() != null){
             cardModel.setSprint(sprintModel.get());
         }
-        cardModel.setEsteiraModel(esteiraModel);
+        cardModel.setEsteira(esteiraModel);
         cardModel.setStatus(StatusCard.TODO);
         cardModel.setPriority(PriorityEnum.LOW);
         cardModel.setPosition(0);
@@ -81,10 +82,28 @@ public class CardServiceImpl implements CardService {
         cardModel.setHoursUsed(0);
         cardModel.setHoursRemainning(dto.getEstimateHours());
         BeanUtils.copyProperties(dto, cardModel);
-        cardRepository.save(cardModel);
+        CardModel saved = cardRepository.save(cardModel);
 
         eventPublisher.publishEvent(new CardCreatedEvent(cardModel.getId(), cardModel.getUserId()));
-        return cardModel;
+        return toResponse(saved);
+    }
+
+    private CardResponse toResponse(CardModel card) {
+        return new CardResponse(
+                card.getId(),
+                card.getTitle(),
+                card.getDescription(),
+                card.getPosition(),
+                card.getStatus(),
+                card.getEstimateHours(),
+                card.getHoursUsed(),
+                card.getHoursRemainning(),
+                card.getDateCreate(),
+                card.getDateUpdated(),
+                card.getDateResolved(),
+                card.getPriority(),
+                card.getEsteira().getEsteiraId()
+        );
     }
 
     @Transactional
@@ -141,7 +160,7 @@ public class CardServiceImpl implements CardService {
         if(cardOpt.isEmpty() || esteiraOpt.isEmpty()){
             throw new RuntimeException("Valide os campos! Status e Esteira id Obrigatórios");
         }
-        EsteiraType atual = cardOpt.get().getEsteiraModel().getType();
+        EsteiraType atual = cardOpt.get().getEsteira().getType();
         int nova = esteiraOpt.get().getType().getOrdem();
 
         if(!atual.canMove(nova)){
@@ -153,9 +172,9 @@ public class CardServiceImpl implements CardService {
             reopenCard(cardOpt.get(), nova);
         }
         var card = cardOpt.get();
-        String esteiraAtual = card.getEsteiraModel().getTitulo();
+        String esteiraAtual = card.getEsteira().getTitulo();
         String novaEsteira = esteiraOpt.get().getTitulo();
-        card.setEsteiraModel(esteiraOpt.get());
+        card.setEsteira(esteiraOpt.get());
         cardRepository.save(card);
         eventPublisher.publishEvent(new CardMovedEvent(card.getId(), card.getUserId(), esteiraAtual, novaEsteira));
     }

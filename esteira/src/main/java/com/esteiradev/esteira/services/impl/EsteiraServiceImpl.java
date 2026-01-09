@@ -45,4 +45,9 @@ public class EsteiraServiceImpl implements EsteiraService {
     public List<EsteiraModel> findAllByUserId(UUID userId) {
         return esteiraRepository.findByUserIdOrderByOrdemAsc(userId);
     }
+
+    @Override
+    public List<EsteiraModel> findBoardByUserId(UUID userId) {
+        return esteiraRepository.findBoardByUserId(userId);
+    }
 }

@@ -47,8 +47,8 @@ public class CardModel {
     private UUID userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "esteira_id")
-    private EsteiraModel esteiraModel;
+    @JoinColumn(name = "esteira_id", nullable = false)
+    private EsteiraModel esteira;
 
     @ManyToOne(optional = true ,fetch = FetchType.LAZY)
     @JoinColumn(name = "sprint_id")

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,6 +33,15 @@ public class EsteiraModel {
     @JsonIgnore
     @Column(nullable = false, length = 30)
     private UUID userId;
+
+    @OneToMany(
+            mappedBy = "esteira",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @OrderBy("priority ASC, position ASC")
+    private List<CardModel> cards = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

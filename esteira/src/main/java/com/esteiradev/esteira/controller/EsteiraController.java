@@ -102,4 +102,10 @@ public class EsteiraController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/getBoard/{userId}")
+    public ResponseEntity<List<EsteiraModel>> getBoard(@PathVariable(value = "userId") UUID userId) {
+        List<EsteiraModel> esteira = esteiraService.findBoardByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(esteira);
+    }
 }

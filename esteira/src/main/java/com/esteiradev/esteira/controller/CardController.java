@@ -3,6 +3,7 @@ package com.esteiradev.esteira.controller;
 import com.esteiradev.esteira.dto.CardDto;
 import com.esteiradev.esteira.dto.MoveCardDto;
 import com.esteiradev.esteira.dto.CardUpdateDto;
+import com.esteiradev.esteira.dto.response.CardResponse;
 import com.esteiradev.esteira.model.history.CardHistory;
 import com.esteiradev.esteira.model.CardModel;
 import com.esteiradev.esteira.services.CardHistoryService;
@@ -42,8 +43,8 @@ public class CardController {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/{esteiraId}/create")
-    public ResponseEntity<Object> create(@PathVariable UUID esteiraId,
-                                             @Validated @RequestBody CardDto dto){
+    public ResponseEntity<CardResponse> create(@PathVariable UUID esteiraId,
+                                               @Validated @RequestBody CardDto dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(cardService.create(esteiraId, dto));
     }
 
