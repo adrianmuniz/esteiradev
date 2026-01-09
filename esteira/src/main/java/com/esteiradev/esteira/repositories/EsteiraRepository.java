@@ -10,7 +10,12 @@ import java.util.UUID;
 
 public interface EsteiraRepository extends JpaRepository<EsteiraModel, UUID>, JpaSpecificationExecutor<EsteiraModel> {
 
-    @Query("select e from EsteiraModel e where e.userId = :userId")
+    @Query("""
+    select e
+    from EsteiraModel e
+    where e.userId = :userId
+    order by e.ordem asc
+    """)
     List<EsteiraModel> findByUserIdOrderByOrdemAsc(UUID userId);
 
 }
