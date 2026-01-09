@@ -3,17 +3,12 @@ package com.esteiradev.esteira.controller;
 import com.esteiradev.esteira.client.UserClient;
 import com.esteiradev.esteira.dto.EsteiraDto;
 import com.esteiradev.esteira.dto.UpdateEsteiraDto;
-import com.esteiradev.esteira.enums.EsteiraType;
 import com.esteiradev.esteira.model.EsteiraModel;
 import com.esteiradev.esteira.services.EsteiraService;
 import com.esteiradev.esteira.services.impl.AcessValidationService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,8 +58,8 @@ public class EsteiraController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping("/getOne/{esteiraId}")
-    public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId, Authentication authentication){
+    @GetMapping("/get/{esteiraId}")
+    public ResponseEntity<Object> get(@PathVariable(value = "esteiraId") UUID esteiraId, Authentication authentication){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Esteira não encontrada");
@@ -100,12 +95,5 @@ public class EsteiraController {
 
             return ResponseEntity.status(HttpStatus.OK).body(esteiraModel);
         }
-    }
-
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/getBoard/{userId}")
-    public ResponseEntity<List<EsteiraModel>> getBoard(@PathVariable(value = "userId") UUID userId) {
-        List<EsteiraModel> esteira = esteiraService.findBoardByUserId(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(esteira);
     }
 }

@@ -41,6 +41,7 @@ public class EsteiraModel {
             orphanRemoval = true
     )
     @OrderBy("priority ASC, position ASC")
+    @JsonIgnore
     private List<CardModel> cards = new ArrayList<>();
 
     @PrePersist
