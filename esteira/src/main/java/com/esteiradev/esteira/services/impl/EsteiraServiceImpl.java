@@ -42,7 +42,7 @@ public class EsteiraServiceImpl implements EsteiraService {
     }
 
     @Override
-    public List<EsteiraModel> findAllByUserId(UUID userId) {
+    public List<EsteiraModel> getByUserId(UUID userId) {
         return esteiraRepository.findByUserIdOrderByOrdemAsc(userId);
     }
 }

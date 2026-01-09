@@ -52,8 +52,8 @@ public class EsteiraController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/{userId}")
-    public ResponseEntity<List<EsteiraModel>> getAllByUserId(@PathVariable(value = "userId") UUID userId) {
-        List<EsteiraModel> esteira = esteiraService.findAllByUserId(userId);
+    public ResponseEntity<List<EsteiraModel>> getByUserId(@PathVariable(value = "userId") UUID userId) {
+        List<EsteiraModel> esteira = esteiraService.getByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(esteira);
     }
 
