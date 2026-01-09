@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,15 +56,14 @@ public class EsteiraController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping
-    public ResponseEntity<Page<EsteiraModel>> getAll(@PageableDefault(page = 0, size = 10, sort = "esteiraId", direction = Sort.Direction.ASC)Pageable pageable) {
-        Page<EsteiraModel> esteiraModelPage = null;
-        esteiraModelPage = esteiraService.findAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(esteiraModelPage);
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<EsteiraModel>> getAllByUserId(@PathVariable(value = "userId") UUID userId) {
+        List<EsteiraModel> esteira = esteiraService.findAllByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(esteira);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping("/{esteiraId}")
+    @GetMapping("/getOne/{esteiraId}")
     public ResponseEntity<Object> getOne(@PathVariable(value = "esteiraId") UUID esteiraId, Authentication authentication){
         Optional<EsteiraModel> esteiraModelOptional = esteiraService.findById(esteiraId);
         if (!esteiraModelOptional.isPresent()) {

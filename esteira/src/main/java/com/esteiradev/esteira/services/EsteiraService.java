@@ -17,4 +17,6 @@ public interface EsteiraService {
     void delete(EsteiraModel esteiraModel);
 
     Page<EsteiraModel> findAll(Pageable pageable);
+
+    List<EsteiraModel> findAllByUserId(UUID userId);
 }

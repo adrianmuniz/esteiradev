@@ -21,10 +21,22 @@ public class EsteiraModel {
     @Column(nullable = false, length = 30)
     private String titulo;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EsteiraType type;
+
+    @Column(nullable = false)
+    private Integer ordem;
 
     @JsonIgnore
     @Column(nullable = false, length = 30)
     private UUID userId;
+
+    @PrePersist
+    @PreUpdate
+    private void syncOrdem() {
+        if (this.type != null) {
+            this.ordem = this.type.getOrdem();
+        }
+    }
 }

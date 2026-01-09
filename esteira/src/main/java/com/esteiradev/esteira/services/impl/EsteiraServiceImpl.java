@@ -40,4 +40,9 @@ public class EsteiraServiceImpl implements EsteiraService {
     public Page<EsteiraModel> findAll(Pageable pageable) {
         return esteiraRepository.findAll(pageable);
     }
+
+    @Override
+    public List<EsteiraModel> findAllByUserId(UUID userId) {
+        return esteiraRepository.findByUserIdOrderByOrdemAsc(userId);
+    }
 }
