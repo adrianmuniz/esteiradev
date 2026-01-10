@@ -13,10 +13,10 @@ import java.util.UUID;
 
 public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpecificationExecutor<CardModel> {
 
-    @EntityGraph(attributePaths = {"esteiraModel", "sprint"})
+    @EntityGraph(attributePaths = {"esteira", "sprint"})
     Page<CardModel> findAllByOrderByPriorityAsc(Pageable pageable);
 
-    @EntityGraph(attributePaths = {"esteiraModel", "sprint"})
+    @EntityGraph(attributePaths = {"esteira", "sprint"})
     Optional<CardModel> findById(UUID id);
 
     boolean existsBySprint_SprintId(UUID sprintId);
