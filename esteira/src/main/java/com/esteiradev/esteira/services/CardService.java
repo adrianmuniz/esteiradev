@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,4 +29,6 @@ public interface CardService {
     CardResponse create(UUID esteiraId, CardDto dto);
 
     CardModel update(UUID cardId, CardUpdateDto dto, Authentication authentication);
+
+    List<CardModel> getWithUserId(UUID userId);
 }

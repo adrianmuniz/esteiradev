@@ -69,6 +69,14 @@ public class CardController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping("/getByUserId/{userId}")
+    public ResponseEntity<List<CardModel>> getCardsWithUserId(@PathVariable(value = "userId") UUID userId){
+        List<CardModel> cards = null;
+        cards = cardService.getWithUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(cards);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable(value = "id") UUID cardId,Authentication authentication){
         Optional<CardModel> optionalCardModel = cardService.get(cardId);

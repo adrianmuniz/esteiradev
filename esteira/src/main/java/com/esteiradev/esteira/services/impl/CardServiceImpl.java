@@ -152,6 +152,11 @@ public class CardServiceImpl implements CardService {
         return card;
     }
 
+    @Override
+    public List<CardModel> getWithUserId(UUID userId) {
+        return cardRepository.findAllByUserId(userId);
+    }
+
     @Transactional
     @Override
     public void moveCard(UUID cardId, MoveCardDto dto) {
