@@ -30,5 +30,5 @@ public interface CardService {
 
     CardModel update(UUID cardId, CardUpdateDto dto, Authentication authentication);
 
-    List<CardModel> getWithUserId(UUID userId);
+    List<CardModel> getCardsByUserId(UUID userId);
 }

@@ -153,7 +153,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public List<CardModel> getWithUserId(UUID userId) {
+    public List<CardModel> getCardsByUserId(UUID userId) {
         return cardRepository.findAllByUserId(userId);
     }
 

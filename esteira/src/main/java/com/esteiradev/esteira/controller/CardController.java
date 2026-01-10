@@ -69,11 +69,9 @@ public class CardController {
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping("/getByUserId/{userId}")
-    public ResponseEntity<List<CardModel>> getCardsWithUserId(@PathVariable(value = "userId") UUID userId){
-        List<CardModel> cards = null;
-        cards = cardService.getWithUserId(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(cards);
+    @GetMapping("/getCardsByUserId/{userId}")
+    public ResponseEntity<List<CardModel>> getCardsByUserId(@PathVariable(value = "userId") UUID userId){
+        return ResponseEntity.status(HttpStatus.OK).body(cardService.getCardsByUserId(userId));
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
