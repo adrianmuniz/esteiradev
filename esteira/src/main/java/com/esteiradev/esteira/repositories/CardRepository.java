@@ -29,6 +29,7 @@ public interface CardRepository extends JpaRepository<CardModel, UUID>, JpaSpeci
     join fetch c.esteira e
     left join fetch c.sprint
     where e.userId = :userId
+    order by c.priority asc
     """)
     List<CardModel> findAllByUserId(UUID userId);
 }

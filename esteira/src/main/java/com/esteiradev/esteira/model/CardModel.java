@@ -54,5 +54,7 @@ public class CardModel {
     @JoinColumn(name = "sprint_id")
     private SprintModel sprint;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
     private PriorityEnum priority;
 }
