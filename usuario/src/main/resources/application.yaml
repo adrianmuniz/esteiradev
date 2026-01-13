@@ -15,10 +15,14 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+    generate_statistics: true
 
 esteiradev:
   auth:
@@ -28,3 +32,13 @@ esteiradev:
 api:
   url:
     esteira: 'http://localhost:8082'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,httptrace,threaddump
+
+logging:
+  level:
+    org.hibernate.stat: DEBUG
